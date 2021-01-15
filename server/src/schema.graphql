@@ -1,0 +1,37 @@
+type Message {
+  sender: String!
+  body: String!
+  receiver: String!
+}
+
+type Register {
+  id: ID!
+  username: String!
+  password: String!
+}
+
+type Query {
+  Messages(query: String): [Message!]!
+}
+
+type Mutation {
+  CreateMessage(data: CreateMessageInput!): Message!
+  DeleteMessage(data: String): String
+  CreateRegister(data: CreateRegisterInput!): Register!
+}
+
+input CreateMessageInput {
+  sender: String!
+  body: String!
+  receiver: String!
+}
+
+input CreateRegisterInput {
+  username: String!
+  password: String!
+}
+
+type Subscription {
+  Message(username: String): Message!
+}
+

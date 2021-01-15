@@ -1,14 +1,7 @@
 {
-  "name": "EEWP-Final",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://b07902046@github.com/b07902046/EEWP-Final.git",
-  "author": "obe1 <b07902046@ntu.edu.tw>",
-  "license": "MIT",
-  "scripts": {
-	  "start": "cd frontend && yarn start",
-	  "server": "cd backend && yarn server"
-  },
+  "name": "rics-chat",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.6",
     "@testing-library/jest-dom": "^5.11.4",
@@ -29,6 +22,13 @@
     "socket.io-client": "^3.0.3",
     "web-vitals": "^0.2.4",
     "websocket": "^1.0.32"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "nodemon"
   },
   "eslintConfig": {
     "extends": [
