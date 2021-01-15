@@ -1,6 +1,5 @@
 const Message = require('../models/message')
 const Register = require('../models/register')
-const mongoose = require('mongoose')
 
 const Query = {
   Messages(parent, args, { db }, info) {
@@ -12,7 +11,15 @@ const Query = {
     let data = getMessage()
     
     return data
-
+  },
+  Registers: async (parent, args, { db }, info) => {
+    let data = await Register.find();
+    if(!args.query) return data
+    else {
+      return data.filter(register => {
+        return register.username.includes(args.query)
+      })
+    }
   }
 }
 

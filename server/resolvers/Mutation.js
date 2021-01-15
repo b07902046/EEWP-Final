@@ -33,14 +33,12 @@ const Mutation = {
         const newID = new mongoose.Types.ObjectId()
         console.log(newID)
         const rgtr = {
-            id: newID,
             ...args.data
         }
-        Register.insertMany(rgtr)
+        Register.insertMany(rgtr).catch((err) => console.log(err))
 
         pubSub.publish(`Register`, {
             Register: {
-                id: rgtr.id,
                 username: rgtr.username,
                 password: rgtr.password
             }

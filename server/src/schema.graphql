@@ -5,13 +5,13 @@ type Message {
 }
 
 type Register {
-  id: ID!
   username: String!
   password: String!
 }
 
 type Query {
   Messages(query: String): [Message!]!
+  Registers(query: String): [Register!]!
 }
 
 type Mutation {

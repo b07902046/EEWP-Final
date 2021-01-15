@@ -6,6 +6,7 @@ import Subscription from './resolvers/Subscription'
 require('dotenv-defaults').config()
 const mongoose = require('mongoose')
 const Message = require('./models/message')
+const Register = require('./models/register')
 
 if (!process.env.MONGO_URL) {
   console.error('Missing MONGO_URL!!!')

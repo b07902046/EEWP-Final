@@ -3,10 +3,6 @@ const Schema = mongoose.Schema
 
 // Creating a schema, sort of like working with an ORM
 const RegisterSchema = new Schema({
-    ID: {
-        type: Schema.Types.ObjectId,
-        required: [true, 'id field is required.']
-    },
     username: {
         type: String,
         required: [true, 'Username field is required.']
