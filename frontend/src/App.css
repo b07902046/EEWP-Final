@@ -1,38 +1,49 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-top: 10%;
+}
+
+.LoginForm > input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 10px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.LoginButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.LoginButton > button {
+  background-color: steelblue;
   color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: 1px solid white;
+  border-radius: 24px;
+  cursor: pointer;
+  width: 20%;
+  transition-duration: 0.4s;
 }
 
-.App-link {
-  color: #61dafb;
+.LoginButton > button:hover {
+  background-color: white;
+  color: steelblue;
+  border: 1px solid steelblue;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.LoginButton > button:active {
+  border: 1px dotted steelblue;
 }
