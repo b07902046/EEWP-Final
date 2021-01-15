@@ -1,17 +1,18 @@
 import './App.css';
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { REGISTER_QUERY } from './graphql/query'
 
 function App() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [isLogin, setLogin] = useState(false);
+  const { loading, error, data, subscribeToMore } = useQuery(REGISTER_QUERY, {
+    variables: {query: username}
+  })
 
   const handleLoginInput = (e) => {
-    if(e.keyCode === 13) {
-      if(username !== '' && password !== '') {
-        alert(username + ' ' + password)
-      }
+    if(e.keyCode === 13 && username !== '' && password !== '') {
+      console.log(data.Registers)
     }
   }
 
