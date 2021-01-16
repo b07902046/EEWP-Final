@@ -17,7 +17,7 @@ const Query = {
     if(!args.query) return data
     else {
       return data.filter(register => {
-        return register.username.includes(args.query)
+        return register.account.includes(args.query)
       })
     }
   }

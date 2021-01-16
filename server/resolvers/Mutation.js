@@ -39,7 +39,7 @@ const Mutation = {
 
         pubSub.publish(`Register`, {
             Register: {
-                username: rgtr.username,
+                account: rgtr.account,
                 password: rgtr.password
             }
         })

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react'
 const client = new WebSocket('ws://localhost:5000')
 
 function RegisterPage() {
-  const [username, setUsername] = useState('')
+  const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [checkpwd, setCheckPwd] = useState('')
 
@@ -16,15 +16,15 @@ function RegisterPage() {
 
   const handleRegisterInput = (e) => {
     if(e === "button" || e.keyCode === 13) {
-      if(username !== "" && password !== "" && checkpwd !== "") {
-        console.log(username)
+      if(account !== "" && password !== "" && checkpwd !== "") {
+        console.log(account)
         console.log(password)
         console.log(checkpwd)
-        let rgtrData = ['register', {username: username, password: password, checkpwd: checkpwd}]
+        let rgtrData = ['register', {account: account, password: password, checkpwd: checkpwd}]
         client.send(JSON.stringify(rgtrData))
       }
       else {
-        if(username === "") alert("Username form must be filled")
+        if(account === "") alert("account form must be filled")
         else alert("Password form must be filled")
       }
     }
@@ -34,7 +34,7 @@ function RegisterPage() {
     <div className="container">
       <header> ChoChoMeet </header>
       <div className="RegisterForm">
-        <input type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Enter new Username" name="username" 
+        <input type="text" onChange={(e) => setAccount(e.target.value)} placeholder="Enter new account" name="account" 
               onKeyUp={handleRegisterInput} required/>
         <br/>
         <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter new Password" name="psw" 

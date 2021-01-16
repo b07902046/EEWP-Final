@@ -47,7 +47,7 @@ db.once('open', () => {
       const [task, payload] = JSON.parse(data)
       switch(task) {
         case "login": {
-          let rData = await Register.find({username: payload.username})
+          let rData = await Register.find({account: payload.account})
           let index = -1
           for(let i = 0; i < rData.length; i++) {
             let res = await bcrypt.compare(payload.password, rData[i].password)
@@ -69,11 +69,15 @@ db.once('open', () => {
         }
         case "register": {
           let hashedPasswd = await bcrypt.hash(payload.password, bcryptHash)
-          bcrypt.compare(payload.checkpwd, hashedPasswd, function(err, res) {
+          bcrypt.compare(payload.checkpwd, hashedPasswd, async (err, res) => {
             if(res) {
-              console.log('match')
-              Register.insertMany([{username: payload.username, password: hashedPasswd}])
-              ws.send(JSON.stringify(['registerRes', 'Success']))
+              let rData = await Register.find({account: payload.account})
+              console.log(rData.length)
+              if(rData.length > 0) ws.send(JSON.stringify(['registerRes', 'Duplicate']))
+              else {
+                Register.insertMany([{account: payload.account, password: hashedPasswd}])
+                ws.send(JSON.stringify(['registerRes', 'Success']))
+              }
             }
             else {
               console.log('not match')

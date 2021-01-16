@@ -3,9 +3,9 @@ const Schema = mongoose.Schema
 
 // Creating a schema, sort of like working with an ORM
 const RegisterSchema = new Schema({
-    username: {
+    account: {
         type: String,
-        required: [true, 'Username field is required.']
+        required: [true, 'Account field is required.']
     },
     password: {
         type: String,

@@ -9,11 +9,8 @@ const client = new WebSocket('ws://localhost:5000')
 
 function App() {
   const [event, setEvent] = useState('login')
-  const [username, setUsername] = useState('')
+  const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
-  const { loading, error, data, subscribeToMore } = useQuery(REGISTER_QUERY, {
-    variables: {query: username}
-  })
 
   client.onmessage = (message) => {
     const [task, payload] = JSON.parse(message.data);
@@ -23,13 +20,12 @@ function App() {
 
   const handleLoginInput = (e) => {
     if(e === "button" || e.keyCode === 13) {
-      if(username !== "" && password !== "") {
-        console.log(data.Registers)
-        let rgtrData = ['login', {username: username, password: password}]
+      if(account !== "" && password !== "") {
+        let rgtrData = ['login', {account: account, password: password}]
         client.send(JSON.stringify(rgtrData))
       }
       else {
-        if(username === "") alert("Username form must be filled")
+        if(account === "") alert("account form must be filled")
         else alert("Password form must be filled")
       }
     }
@@ -44,7 +40,7 @@ function App() {
       <div className="container">
         <header> ChoChoMeet </header>
         <div className="LoginForm">
-          <input type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username" name="username" 
+          <input type="text" onChange={(e) => setAccount(e.target.value)} placeholder="Enter account" name="account" 
                 onKeyUp={handleLoginInput} required/>
           <br/>
           <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" name="psw" 
