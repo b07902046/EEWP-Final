@@ -4,6 +4,11 @@
   align-items: center;
 }
 
+.container > header {
+  font-size: 50px;
+  font-family: Lucida Console, Courier, monospace;
+}
+
 .LoginForm {
   display: flex;
   flex-direction: column;
@@ -11,7 +16,7 @@
   margin-top: 10%;
 }
 
-.LoginForm > input[type=text], input[type=password] {
+.LoginForm > input {
   width: 100%;
   padding: 12px 10px;
   display: inline-block;
@@ -46,4 +51,19 @@
 
 .LoginButton > button:active {
   border: 1px dotted steelblue;
+}
+
+.RegisterForm {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-top: 10%;
+}
+
+.RegisterForm > input {
+  width: 100%;
+  padding: 12px 10px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }

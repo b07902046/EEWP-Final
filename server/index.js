@@ -47,11 +47,39 @@ db.once('open', () => {
       const [task, payload] = JSON.parse(data)
       switch(task) {
         case "login": {
-          let hashedPasswd = await bcrypt.hash(payload.password, bcryptHash)
-          let rData = await Register.find({username: payload.username, password: hashedPasswd})
-          console.log(hashedPasswd)
-          ws.send(JSON.stringify(['loginRes', rData.length]))
+          let rData = await Register.find({username: payload.username})
+          let index = -1
+          for(let i = 0; i < rData.length; i++) {
+            let res = await bcrypt.compare(payload.password, rData[i].password)
+            if(res) {
+              index = i
+              break
+            }
+          }
+          if(index === -1) {
+            ws.send(JSON.stringify(['loginRes', "Fail"]))
+          }
+          else {
+            let sid = String(rData[index]._id)
+            // let oid = new mongoose.Types.ObjectId(sid)
+            // let t = await Register.find({_id: sid})
+            ws.send(JSON.stringify(["loginRes", sid]))
+          }
           break
+        }
+        case "register": {
+          let hashedPasswd = await bcrypt.hash(payload.password, bcryptHash)
+          bcrypt.compare(payload.checkpwd, hashedPasswd, function(err, res) {
+            if(res) {
+              console.log('match')
+              Register.insertMany([{username: payload.username, password: hashedPasswd}])
+              ws.send(JSON.stringify(['registerRes', 'Success']))
+            }
+            else {
+              console.log('not match')
+              ws.send(JSON.stringify(['registerRes', 'Fail']))
+            }
+          })
         }
         default: break
       }
