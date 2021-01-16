@@ -72,7 +72,6 @@ db.once('open', () => {
           bcrypt.compare(payload.checkpwd, hashedPasswd, async (err, res) => {
             if(res) {
               let rData = await Register.find({account: payload.account})
-              console.log(rData.length)
               if(rData.length > 0) ws.send(JSON.stringify(['registerRes', 'Duplicate']))
               else {
                 Register.insertMany([{account: payload.account, password: hashedPasswd}])
@@ -80,7 +79,6 @@ db.once('open', () => {
               }
             }
             else {
-              console.log('not match')
               ws.send(JSON.stringify(['registerRes', 'Fail']))
             }
           })

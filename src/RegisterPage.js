@@ -44,6 +44,7 @@ function RegisterPage() {
               onKeyUp={handleRegisterInput} required />
         <div className="LoginButton">
           <button type="submit"> Sign Up </button>
+          <button type="submit"> Back </button>
         </div>
       </div>
     </div>
