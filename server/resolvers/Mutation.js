@@ -1,6 +1,6 @@
 const Message = require('../models/message')
 const Register = require('../models/register')
-const mongoose = require('mongoose')
+const Schedule = require('../models/schedule')
 
 const Mutation = {
     CreateMessage(parent, args, { db, pubSub }, info) {
@@ -30,8 +30,6 @@ const Mutation = {
         }
     },
     CreateRegister(parent, args, { db, pubSub }, info) {
-        const newID = new mongoose.Types.ObjectId()
-        console.log(newID)
         const rgtr = {
             ...args.data
         }
@@ -43,8 +41,15 @@ const Mutation = {
                 password: rgtr.password
             }
         })
-
         return rgtr
+    },
+    CreateSchedule(parent, args, { db, pubSub }, info) {
+        const schedule = {
+            ...args.data
+        }
+        Schedule.insertMany(schedule).catch((err) => console.log(err))
+        
+        return schedule
     }
 }
 

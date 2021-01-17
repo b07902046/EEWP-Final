@@ -145,7 +145,7 @@
 
 .schedularForm > button {
   width: 5vw;
-  background-color: steelblue;
+  background-color: rgb(241, 101, 101);
   border-radius: 1vw;
   border: 1px solid #ccc;
   margin-top: 1vh;
@@ -156,10 +156,43 @@
 
 .schedularForm > button:hover {
   background-color: white;
-  color: steelblue;
-  border: 1px solid steelblue;
+  color: rgb(241, 101, 101);;
+  border: 1px solid rgb(241, 101, 101);;
 }
 
 .schedularForm > button:active {
+  color: steelblue;
   border: 1px dotted steelblue;
+}
+
+.scheduleFunctional {
+  width: 80vw;
+  height: 10vh;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.scheduleFunctional > button {
+  width: 20vw;
+  height: 7vh;
+  border: 1px solid #bbb;
+  background-color: rgb(241, 101, 101);
+  color: white;
+  border-radius: 3vh;
+  transition-duration: 0.4s;
+}
+
+.scheduleFunctional > button:hover {
+  background-color: white;
+  color: rgb(241, 101, 101);
+  border: 1px solid rgb(241, 101, 101);
+}
+
+.scheduleFunctional > button:active {
+  background-color: white;
+  color: steelblue;
+  border: 1px dotted steelblue
 }

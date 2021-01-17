@@ -18,6 +18,7 @@ const wss = new WebSocket.Server({ server })
 require('dotenv-defaults').config()
 const mongoose = require('mongoose')
 const Register = require('./models/register')
+const Schedule = require('./models/schedule')
 
 // bcrypt
 const bcryptHash = '$2a$10$fok18OT0R#cWoR0a.VsjjuuYZV.XrfdYd5CpDWrYkhi1F0i8ABp6e'

@@ -1,3 +1,5 @@
+import Schedule from '../models/schedule'
+
 const Message = require('../models/message')
 const Register = require('../models/register')
 
@@ -18,6 +20,15 @@ const Query = {
     else {
       return data.filter(register => {
         return register.account.includes(args.query)
+      })
+    }
+  },
+  Schedules: async (parent, args, { db }, info) => {
+    let data = await Schedule.find();
+    if(!args.query) return data
+    else {
+      return data.filter(schedule => {
+        return schedule.user === args.query
       })
     }
   }

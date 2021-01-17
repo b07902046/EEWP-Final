@@ -88,12 +88,12 @@ function App() {
       setCursEnd(minute)
     }
     let timeInfo = e.target.firstChild
-    timeInfo.style.visibility = "hidden"
+    if(timeInfo && timeInfo.style && timeInfo.style.visibility) timeInfo.style.visibility = "hidden"
   }
 
   const handleDragOver = (e) => {
     let timeInfo = e.target.firstChild
-    timeInfo.style.visibility = "visible"
+    if(timeInfo && timeInfo.style && timeInfo.style.visibility) timeInfo.style.visibility = "visible"
   }
 
   const handleRegister = () => {
@@ -101,7 +101,7 @@ function App() {
   }
 
   const handleClickDateBlock = (day, e) => {
-    setEvent("scheduling")
+    setEvent("schedule")
     setDay(day)
   }
 
@@ -190,6 +190,16 @@ function App() {
         </div>
 
       </div>
+    ) : (event === "schedule")? (
+      <div className="container">
+        <header> ChoChoMeet </header>
+        <h1> {year}. {month}. {day}. </h1>
+        <div className="scheduleFunctional">
+          <button onClick={() => setEvent("scheduling")}> Add schedule + </button>
+          <button> Add election + </button>
+        </div>
+      </div>
+
     ) : (event === "scheduling")? (
       <div className="container">
         <header> ChoChoMeet </header>
@@ -204,7 +214,7 @@ function App() {
         <div className="schedularForm">
           <input className="scheduleTitle" placeholder="add title"/>
           <textarea className="scheduleContent" placeholder="add contents" rows="5"/>
-          <button type="submit"> Add </button>
+          <button type="submit" onClick={() => setEvent("schedule")}> Add </button>
         </div>
       </div>
     ) : (

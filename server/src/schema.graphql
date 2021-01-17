@@ -9,15 +9,26 @@ type Register {
   password: String!
 }
 
+type Schedule {
+  user: String!
+  start: String!
+  end: String!
+  color: String!
+  title: String!
+  content: String
+}
+
 type Query {
   Messages(query: String): [Message!]!
   Registers(query: String): [Register!]!
+  Schedules(query: String): [Schedule!]!
 }
 
 type Mutation {
   CreateMessage(data: CreateMessageInput!): Message!
   DeleteMessage(data: String): String
   CreateRegister(data: CreateRegisterInput!): Register!
+  CreateSchedule(data: CreateScheduleInput!): Schedule!
 }
 
 input CreateMessageInput {
@@ -29,6 +40,15 @@ input CreateMessageInput {
 input CreateRegisterInput {
   account: String!
   password: String!
+}
+
+input CreateScheduleInput {
+  user: String!
+  start: String!
+  end: String!
+  color: String!
+  title: String!
+  content: String
 }
 
 type Subscription {
