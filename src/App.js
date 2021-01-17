@@ -5,12 +5,28 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { REGISTER_QUERY } from './graphql/query'
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
+import TimeInfoBlock from './components/TimeInfo'
 
 const client = new WebSocket('ws://localhost:5000')
+let mouseClick = false
 
-function dateBlockInfo(day, onclick) {
+window.addEventListener('mousedown', () => {
+  mouseClick = true
+});
+window.addEventListener('mouseup', () => {
+  mouseClick = false
+})
+
+function DateBlockInfo(day, onclick) {
   this.day = day
   this.onclick = onclick
+}
+
+function TimePointer(year, month, day, hour) {
+  this.year = year
+  this.month = month
+  this.day = day
+  this.hour = hour
 }
 
 function App() {
@@ -22,8 +38,13 @@ function App() {
   const date = new Date()
   const [year, setYear] = useState(date.getFullYear())
   const [month, setMonth] = useState(date.getMonth() + 1)
+  const [day, setDay] = useState(date.getDate())
 
   const [dateInfo, setDateInfo] = useState([])
+  const [timePointer, setTimePointer] = useState([])
+
+  let cursorBegin = undefined
+  let cursorEnd = undefined
 
   client.onmessage = (message) => {
     const [task, payload] = JSON.parse(message.data);
@@ -52,12 +73,17 @@ function App() {
     }
   }
 
+  const handleDrag = (e) => {
+    if(mouseClick) e.target.style.backgroundColor = "green"
+  }
+
   const handleRegister = () => {
     setEvent("register")
   }
 
   const handleClickDateBlock = (day, e) => {
-    console.log(day)
+    setEvent("scheduling")
+    setDay(day)
   }
 
   useEffect(() => {
@@ -67,15 +93,15 @@ function App() {
     
     // add spare blocks in front
     for(let i = 0; i < weekday; i++) {
-      newDateInfo.push(new dateBlockInfo(0, null))
+      newDateInfo.push(new DateBlockInfo(0, null))
     }
     
     for(let i = 1; i <= numDay; i++) {
-      newDateInfo.push(new dateBlockInfo(i, null))
+      newDateInfo.push(new DateBlockInfo(i, null))
     }
     // add spare blocks at back
     while(newDateInfo.length % 7 !== 0) {
-      newDateInfo.push(new dateBlockInfo(0, null))
+      newDateInfo.push(new DateBlockInfo(0, null))
     }
     let newDateArrange = []
     let num = 0
@@ -87,6 +113,14 @@ function App() {
     }
     setDateInfo(newDateArrange)
   }, [year, month])
+
+  useEffect(() => {
+    let newTimePointer = []
+    for(let i = 0; i < 24; i++) {
+      newTimePointer.push(new TimePointer(year, month, day, i))
+    }
+    setTimePointer(newTimePointer)
+  }, [day])
 
   return (
     (event === "login")? (
@@ -129,6 +163,14 @@ function App() {
           {dateInfo.map(dateinfo => <div className="week-bar" key={dateinfo[0].key}> {dateinfo} </div>)}
         </div>
 
+      </div>
+    ) : (event === "scheduling")? (
+      <div className="container">
+        <header> ChoChoMeet </header>
+        <h1> {year}. {month}. {day}. </h1>
+        <div className="timeline">
+          {timePointer.map(tp => <TimeInfoBlock hour={tp.hour} onMouseOver={handleDrag}></TimeInfoBlock>)}
+        </div>
       </div>
     ) : (
       <div> Hello others </div>

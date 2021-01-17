@@ -100,3 +100,21 @@
 .date-block:hover {
   background-color: green;
 }
+
+.timeline {
+  width: 60vw;
+  height: 60vh;
+  margin:20px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+.timeSchedular {
+  min-width: 10vw;
+  border: 1px solid #bbb;
+  resize: none;
+}
