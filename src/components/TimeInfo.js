@@ -57,28 +57,24 @@ window.addEventListener('mouseup', () => {
     isMouseDown = false
 })
 
-function mouseFocus(e) {
-    if(isMouseDown) e.target.style.backgroundColor = "green";
-}
-
-const TimeInfo = ({hour: hour, onMouseOver: onMouseOver}) => (
+const TimeInfo = ({hour: hour, onMouseOut: onMouseOut}) => (
     <div style={containerStyle}>
       <div style={barStyle}>
         <div style={dotStyle}> {hour} </div>
       </div>
       <div style={timeBlockStyle}>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
-        <div style={timeBarStyle} onMouseOver={onMouseOver.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
+        <div style={timeBarStyle} onMouseOut={onMouseOut.bind(this)}></div>
       </div>
     </div>
 )

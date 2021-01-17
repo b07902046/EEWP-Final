@@ -6,16 +6,10 @@ import { REGISTER_QUERY } from './graphql/query'
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
 import TimeInfoBlock from './components/TimeInfo'
+import TimeLine from './components/TimeLine'
+import { CloudSearchDomain } from 'aws-sdk';
 
 const client = new WebSocket('ws://localhost:5000')
-let mouseClick = false
-
-window.addEventListener('mousedown', () => {
-  mouseClick = true
-});
-window.addEventListener('mouseup', () => {
-  mouseClick = false
-})
 
 function DateBlockInfo(day, onclick) {
   this.day = day
@@ -43,8 +37,20 @@ function App() {
   const [dateInfo, setDateInfo] = useState([])
   const [timePointer, setTimePointer] = useState([])
 
-  let cursorBegin = undefined
-  let cursorEnd = undefined
+  const [mouseStatus, setMouseStatus] = useState(false)
+  // cursor begin/end
+  const [cursBeg, setCursBeg] = useState(undefined)
+  const [cursEnd, setCursEnd] = useState(undefined)
+
+  const [color, setColor] = useState("#00FFFF")
+
+  document.addEventListener('mousedown', () => {
+    setMouseStatus(true)
+  })
+
+  document.addEventListener('mouseup', () => {
+    setMouseStatus(false)
+  })
 
   client.onmessage = (message) => {
     const [task, payload] = JSON.parse(message.data);
@@ -73,8 +79,21 @@ function App() {
     }
   }
 
-  const handleDrag = (e) => {
-    if(mouseClick) e.target.style.backgroundColor = "green"
+  const handleDragOut = (minute, e) => {
+    if(mouseStatus) {
+      e.target.style.backgroundColor = color
+      if(cursBeg === undefined) {
+        setCursBeg(minute)
+      }
+      setCursEnd(minute)
+    }
+    let timeInfo = e.target.firstChild
+    timeInfo.style.visibility = "hidden"
+  }
+
+  const handleDragOver = (e) => {
+    let timeInfo = e.target.firstChild
+    timeInfo.style.visibility = "visible"
   }
 
   const handleRegister = () => {
@@ -122,6 +141,13 @@ function App() {
     setTimePointer(newTimePointer)
   }, [day])
 
+  useEffect(() => {
+    if(mouseStatus === false && cursBeg && cursEnd) {
+      setCursBeg(undefined)
+      setCursEnd(undefined)
+    }
+  }, [mouseStatus])
+
   return (
     (event === "login")? (
       <div className="container">
@@ -168,8 +194,17 @@ function App() {
       <div className="container">
         <header> ChoChoMeet </header>
         <h1> {year}. {month}. {day}. </h1>
+        <form>
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)}/>
+        </form>
         <div className="timeline">
-          {timePointer.map(tp => <TimeInfoBlock hour={tp.hour} onMouseOver={handleDrag}></TimeInfoBlock>)}
+          {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} 
+          onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
+        </div>
+        <div className="schedularForm">
+          <input className="scheduleTitle" placeholder="add title"/>
+          <textarea className="scheduleContent" placeholder="add contents" rows="5"/>
+          <button type="submit"> Add </button>
         </div>
       </div>
     ) : (
