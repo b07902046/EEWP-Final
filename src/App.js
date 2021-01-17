@@ -8,6 +8,11 @@ import DateBlock from './components/DateBlock'
 
 const client = new WebSocket('ws://localhost:5000')
 
+function dateBlockInfo(day, onclick) {
+  this.day = day
+  this.onclick = onclick
+}
+
 function App() {
   const [event, setEvent] = useState('login')
   const [account, setAccount] = useState('')
@@ -15,10 +20,10 @@ function App() {
   const [userID, setUserID] = useState("")
 
   const date = new Date()
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const weekday = date.getDay()
+  const [year, setYear] = useState(date.getFullYear())
+  const [month, setMonth] = useState(date.getMonth() + 1)
+
+  const [dateInfo, setDateInfo] = useState([])
 
   client.onmessage = (message) => {
     const [task, payload] = JSON.parse(message.data);
@@ -51,9 +56,37 @@ function App() {
     setEvent("register")
   }
 
-  const handleClickDateBlock = () => {
-    setEvent("schedule")
+  const handleClickDateBlock = (day, e) => {
+    console.log(day)
   }
+
+  useEffect(() => {
+    let weekday = new Date(year, month - 1, 1).getDay()
+    let numDay = new Date(year, month, 0).getDate()
+    let newDateInfo = []
+    
+    // add spare blocks in front
+    for(let i = 0; i < weekday; i++) {
+      newDateInfo.push(new dateBlockInfo(0, null))
+    }
+    
+    for(let i = 1; i <= numDay; i++) {
+      newDateInfo.push(new dateBlockInfo(i, null))
+    }
+    // add spare blocks at back
+    while(newDateInfo.length % 7 !== 0) {
+      newDateInfo.push(new dateBlockInfo(0, null))
+    }
+    let newDateArrange = []
+    let num = 0
+    for(let i = 0; i < Math.ceil(newDateInfo.length / 7); i++) {
+      let tmpDateInfo = newDateInfo.slice(i * 7, i * 7 + 7)
+      newDateArrange.push(tmpDateInfo.map(dateinfo => (dateinfo.day === 0)?
+      (<DateBlock date="" key={num++}></DateBlock>) : 
+      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this, dateinfo.day)}></DateBlock>)))
+    }
+    setDateInfo(newDateArrange)
+  }, [year, month])
 
   return (
     (event === "login")? (
@@ -78,8 +111,11 @@ function App() {
         <header> ChoChoMeet </header>
         <h1> Calendar </h1>
         <div className="time-info">
+          <button type="submit" onClick={(e) => setMonth(month - 1)}> {'<<'} </button>
           {year}. {month}
+          <button type="submit" onClick={(e) => setMonth(month + 1)}> {'>>'} </button>
         </div>
+
         <div className="Calendar">
           <div className="week-bar">
             <div className="week-name"> Sun. </div>
@@ -90,60 +126,7 @@ function App() {
             <div className="week-name"> Fri. </div>
             <div className="week-name"> Sat. </div>
           </div>
-          <div className="week-bar">
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date="1" onClick={handleClickDateBlock}></DateBlock>
-            <DateBlock date="2"></DateBlock>
-          </div>
-          <div className="week-bar">
-            <DateBlock date="3"></DateBlock>
-            <DateBlock date="4"></DateBlock>
-            <DateBlock date="5"></DateBlock>
-            <DateBlock date="6"></DateBlock>
-            <DateBlock date="7"></DateBlock>
-            <DateBlock date="8"></DateBlock>
-            <DateBlock date="9"></DateBlock>
-          </div>
-          <div className="week-bar">
-            <DateBlock date="10"></DateBlock>
-            <DateBlock date="11"></DateBlock>
-            <DateBlock date="12"></DateBlock>
-            <DateBlock date="13"></DateBlock>
-            <DateBlock date="14"></DateBlock>
-            <DateBlock date="15"></DateBlock>
-            <DateBlock date="16"></DateBlock>
-          </div>
-          <div className="week-bar">
-            <DateBlock date="17"></DateBlock>
-            <DateBlock date="18"></DateBlock>
-            <DateBlock date="19"></DateBlock>
-            <DateBlock date="20"></DateBlock>
-            <DateBlock date="21"></DateBlock>
-            <DateBlock date="22"></DateBlock>
-            <DateBlock date="23"></DateBlock>
-          </div>
-          <div className="week-bar">
-            <DateBlock date="24"></DateBlock>
-            <DateBlock date="25"></DateBlock>
-            <DateBlock date="26"></DateBlock>
-            <DateBlock date="27"></DateBlock>
-            <DateBlock date="28"></DateBlock>
-            <DateBlock date="29"></DateBlock>
-            <DateBlock date="30"></DateBlock>
-          </div>
-          <div className="week-bar">
-            <DateBlock date="31" className="date-block"></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-            <DateBlock date=""></DateBlock>
-          </div>
+          {dateInfo.map(dateinfo => <div className="week-bar" key={dateinfo[0].key}> {dateinfo} </div>)}
         </div>
 
       </div>

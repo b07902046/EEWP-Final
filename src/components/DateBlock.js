@@ -23,7 +23,7 @@ function hoverOutEvent(e) {
 }
 
 const DateBlock = ({date: date, onClick: onClick}) => (
-  <div style={style} onMouseOver={hoverOnEvent.bind(this)} onMouseOut={hoverOutEvent.bind(this)} onClick={onClick}>
+  <div style={style} onMouseOver={hoverOnEvent.bind(this)} onMouseOut={hoverOutEvent.bind(this)} onClick={onClick} value={date}>
     {date}
   </div>
 )
