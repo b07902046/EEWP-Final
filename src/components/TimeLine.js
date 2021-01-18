@@ -57,8 +57,9 @@ let timeblockStyle = {
     visibility: "hidden"
 }
 
-function TimeLine({year: year, month: month, day: day, hour: hour}) {
-  const [colorList, setColorList] = useState(colors)
+function TimeLine({year: year, month: month, day: day, hour: hour, colors: colors, onMouseOut: onMouseOut, onMouseOver: onMouseOver}) {
+  const [styles, setStyles] = useState(undefined)
+  const [timebar, setTimeBar] = useState(undefined)
 
   return (
     <div style={containerStyle}>
@@ -66,40 +67,40 @@ function TimeLine({year: year, month: month, day: day, hour: hour}) {
         <div style={dotStyle}> {hour} </div>
       </div>
       <div style={timeBarContainer}>
-        <div style={{...timeBarStyle}} onMouseOut={onMouseOut.bind(this, hour * 60)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[0]}} onMouseOut={onMouseOut.bind(this, hour * 60)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:05 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[1]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 5)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[1]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 5)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:10 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[2]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 10)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[2]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 10)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:15 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[3]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 15)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[3]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 15)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:20 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[4]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 20)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[4]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 20)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:25 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[5]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 25)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[5]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 25)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:30 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[6]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 30)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[6]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 30)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:35 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[7]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 35)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[7]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 35)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:40 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[8]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 40)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[8]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 40)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:45 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[9]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 45)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[9]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 45)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:50 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[10]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 50)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[10]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 50)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {hour}:55 </div>
         </div>
-        <div style={{...timeBarStyle, backgroundColor: colorList[11]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 55)} onMouseOver={onMouseOver}>
+        <div style={{...timeBarStyle, backgroundColor: colors[11]}} onMouseOut={onMouseOut.bind(this, hour * 60 + 55)} onMouseOver={onMouseOver}>
           <div style={timeblockStyle}> {(hour + 1) % 24}:00 </div>
         </div>
         

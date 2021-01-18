@@ -196,25 +196,3 @@
   color: steelblue;
   border: 1px dotted steelblue
 }
-
-.timebar {
-  width: 1.2vw;
-  height: 15vh;
-  border: 1px solid #bbb;
-  borderRadius: 3px;
-}
-
-.timeInfo {
-  width: 5vw;
-  height: 2vh;
-  margin-top: 17vh;
-  margin-left: -1.9vw;
-  font-size: 1vw;
-  color: gray;
-  text-align: center;
-  visibility: hidden;
-}
-
-.timebar:hover > .timeInfo {
-  visibility: visible;
-}
