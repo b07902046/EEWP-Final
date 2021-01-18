@@ -17,11 +17,12 @@ function DateBlockInfo(day, onclick) {
   this.onclick = onclick
 }
 
-function TimePointer(year, month, day, hour) {
+function TimePointer(year, month, day, hour, colors) {
   this.year = year
   this.month = month
   this.day = day
   this.hour = hour
+  this.colors = colors;
 }
 
 function App() {
@@ -51,7 +52,11 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
 
   // graphql
-  const { loading, error, data, subscribeToMore } = useQuery(SCHEDULE_QUERY)
+  const { loading, error, data, subscribeToMore } = useQuery(SCHEDULE_QUERY, {
+    variables: {
+      query: userID
+    }
+  })
   const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
 
   document.addEventListener('mousedown', () => {
@@ -176,7 +181,22 @@ function App() {
   useEffect(() => {
     let newTimePointer = []
     for(let i = 0; i < 24; i++) {
-      newTimePointer.push(new TimePointer(year, month, day, i))
+      let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
+      newTimePointer.push(new TimePointer(year, month, day, i, colors))
+    }
+    if(data) {
+      for(let i = 0; i < data.Schedules.length; i++) {
+        let tstart = new Date(parseInt(data.Schedules[i].start))
+        let tend = new Date(parseInt(data.Schedules[i].end))
+
+        if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
+          for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
+            let h = Math.floor(j / 60)
+            let m = Math.floor((j % 60) / 5)
+            newTimePointer[h].colors[m] = data.Schedules[i].color
+          }
+        }
+      }
     }
     setTimePointer(newTimePointer)
   }, [day])
@@ -254,7 +274,7 @@ function App() {
           <input type="color" value={color} onChange={(e) => setColor(e.target.value)}/>
         </form>
         <div className="timeline">
-          {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} 
+          {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} colors={tp.colors}
           onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
         </div>
         <div className="schedularForm">

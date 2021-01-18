@@ -10,12 +10,14 @@ export const REGISTER_QUERY = gql`
 `
 
 export const SCHEDULE_QUERY = gql`
-  query {
-    Schedules {
+  query Schedules($query: String!) {
+    Schedules(query: $query) {
       user
       start
       end
+      color
       title
+      content
     }
   }
 `
