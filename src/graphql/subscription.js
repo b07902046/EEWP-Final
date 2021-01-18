@@ -11,17 +11,14 @@ subscription{
 `
 
 export const SCHEDULE_SUBSCRIPTION = gql`
-  subscription Schedule(
-    $user: String!
-  ) {
-    Schedule(user: $user) {
-      user
-      start
-      end
-      color
-      title
-      content
-    }
-
+subscription onSchedule($user: String!) {
+  Schedule (user: $user) {
+    user
+    start
+    end
+    color
+    title
+    content
   }
+}
 `

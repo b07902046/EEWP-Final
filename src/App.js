@@ -1,9 +1,10 @@
 import './App.css';
 import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { SCHEDULE_QUERY } from './graphql/query'
 import { CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
+import { SCHEDULE_SUBSCRIPTION } from './graphql/subscription'
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
 import TimeInfoBlock from './components/TimeInfo'
@@ -52,7 +53,7 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
 
   // graphql
-  const { loading, error, data, subscribeToMore } = useQuery(SCHEDULE_QUERY, {
+  const { subscribeToMore, ...result } = useQuery(SCHEDULE_QUERY, {
     variables: {
       query: userID
     }
@@ -179,27 +180,28 @@ function App() {
   }, [year, month])
 
   useEffect(() => {
-    let newTimePointer = []
-    for(let i = 0; i < 24; i++) {
-      let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
-      newTimePointer.push(new TimePointer(year, month, day, i, colors))
-    }
-    if(data) {
-      for(let i = 0; i < data.Schedules.length; i++) {
-        let tstart = new Date(parseInt(data.Schedules[i].start))
-        let tend = new Date(parseInt(data.Schedules[i].end))
-
-        if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
-          for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
-            let h = Math.floor(j / 60)
-            let m = Math.floor((j % 60) / 5)
-            newTimePointer[h].colors[m] = data.Schedules[i].color
+    if(result.data) {
+      if(timePointer !== undefined) {
+        let newTimePointer = timePointer
+        for(let i = 0; i < result.data.Schedules.length; i++) {
+          let sdata = result.data.Schedules[i]
+          let ss = new Date(parseInt(sdata.start))
+          let es = new Date(parseInt(sdata.end))
+          
+          if(ss.getFullYear() === year && ss.getMonth() + 1 === month && ss.getDate() === day) {
+            let shash = ss.getHours() * 60 + ss.getMinutes()
+            let ehash = es.getHours() * 60 + es.getMinutes()
+            for(let j = shash; j <= ehash; j++) {
+              let h = Math.floor(j / 60)
+              let m = Math.floor((j % 60) / 5)
+              newTimePointer[h].colors[m] = sdata.color
+            }
           }
         }
+        setTimePointer(newTimePointer)
       }
     }
-    setTimePointer(newTimePointer)
-  }, [event])
+  }, [result.data])
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg && cursEnd) {
@@ -213,6 +215,34 @@ function App() {
       setCursEnd(undefined)
     }
   }, [mouseStatus])
+
+  useEffect(() => {
+    subscribeToMore({
+      document: SCHEDULE_SUBSCRIPTION,
+      variables: { user: "6002bf451d35b0ed22e9685f" },
+      updateQuery: (prev, { subscriptionData }) => {
+        if(!subscriptionData.data) return prev
+        const newData = subscriptionData.data.Schedule
+        
+        return { ...prev, Schedules: [...prev.Schedules, newData]}
+        
+      }
+    })
+  }, [subscribeToMore])
+
+  useEffect(() => {
+    if(timePointer.length === 0) {
+
+      let newTimePointer = []
+      for(let i = 0; i < 24; i++) {
+        let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        newTimePointer.push(new TimePointer(year, month, day, i, colors))
+      }  
+      setTimePointer(newTimePointer)
+    }
+  }, [timePointer])
+
+
 
   return (
     (event === "login")? (
