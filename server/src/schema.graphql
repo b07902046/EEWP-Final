@@ -53,5 +53,6 @@ input CreateScheduleInput {
 
 type Subscription {
   Message(username: String): Message!
+  Schedule(user: String!): Schedule!
 }
 

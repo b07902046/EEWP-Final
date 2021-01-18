@@ -48,6 +48,10 @@ const Mutation = {
             ...args.data
         }
         Schedule.insertMany(schedule).catch((err) => console.log(err))
+
+        pubSub.publish(`Schedule ${schedule.user}`, {
+            Schedule: {...schedule}
+        })
         
         return schedule
     }

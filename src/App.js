@@ -199,7 +199,7 @@ function App() {
       }
     }
     setTimePointer(newTimePointer)
-  }, [day])
+  }, [event])
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg && cursEnd) {
