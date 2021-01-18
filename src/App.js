@@ -2,7 +2,8 @@ import './App.css';
 import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { REGISTER_QUERY } from './graphql/query'
+import { SCHEDULE_QUERY } from './graphql/query'
+import { CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
 import TimeInfoBlock from './components/TimeInfo'
@@ -41,8 +42,17 @@ function App() {
   // cursor begin/end
   const [cursBeg, setCursBeg] = useState(undefined)
   const [cursEnd, setCursEnd] = useState(undefined)
+  const [startTime, setStartTime] = useState(undefined)
+  const [endTime, setEndTime] = useState(undefined)
 
-  const [color, setColor] = useState("#00FFFF")
+  // schedule
+  const [title, setTitle] = useState("")
+  const [content, setContent] = useState("")
+  const [color, setColor] = useState("#00FFdd")
+
+  // graphql
+  const { loading, error, data, subscribeToMore } = useQuery(SCHEDULE_QUERY)
+  const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
 
   document.addEventListener('mousedown', () => {
     setMouseStatus(true)
@@ -105,6 +115,36 @@ function App() {
     setDay(day)
   }
 
+  const handleAddSchedule = () => {
+    if(!startTime || !endTime) {
+      alert("Please select an interval")
+      return
+    }
+
+    let startHour = Math.floor(startTime / 60)
+    let endHour = Math.floor(endTime / 60)
+    let startMin = startTime % 60
+    let endMin = endTime % 60
+    
+    let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
+    let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
+
+    addSchedule({
+      variables: {
+        user: userID,
+        start: tstart,
+        end: tend,
+        color: color,
+        title: btoa(title),
+        content: (content === "")? (null) : (btoa(content))
+      }
+    })
+
+    setStartTime(undefined)
+    setEndTime(undefined)
+    setEvent("schedule")
+  }
+
   useEffect(() => {
     let weekday = new Date(year, month - 1, 1).getDay()
     let numDay = new Date(year, month, 0).getDate()
@@ -143,6 +183,12 @@ function App() {
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg && cursEnd) {
+      let tbeg = cursBeg
+      let tend = cursEnd
+
+      setStartTime(tbeg)
+      setEndTime(tend)
+
       setCursBeg(undefined)
       setCursEnd(undefined)
     }
@@ -212,9 +258,9 @@ function App() {
           onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
         </div>
         <div className="schedularForm">
-          <input className="scheduleTitle" placeholder="add title"/>
-          <textarea className="scheduleContent" placeholder="add contents" rows="5"/>
-          <button type="submit" onClick={() => setEvent("schedule")}> Add </button>
+          <input className="scheduleTitle" placeholder="add title" onChange={(e) => setTitle(e.target.value)}/>
+          <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
+          <button type="submit" onClick={handleAddSchedule}> Add </button>
         </div>
       </div>
     ) : (

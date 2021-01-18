@@ -29,3 +29,30 @@ export const DELETE_POST_MUTATION = gql`
         )
     }
 `
+
+export const CREATE_SCHEDULE_MUTATION = gql`
+    mutation CreateSchedule(
+        $user: String!
+        $start: String!
+        $end: String!
+        $color: String!
+        $title: String!
+        $content: String
+    ) {
+        CreateSchedule(
+            data: {
+                user: $user
+                start: $start
+                end: $end
+                color: $color
+                title: $title
+                content: $content
+            }
+        ) {
+            user
+            start
+            title
+            content
+        }
+    }
+`
