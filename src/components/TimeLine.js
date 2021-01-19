@@ -36,7 +36,7 @@ let timeBarContainer = {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: "3vh"
+    marginTop: "5vh"
 }
 
 let timeBarStyle = {
@@ -49,7 +49,7 @@ let timeBarStyle = {
 let timeblockStyle = {
     width: "5vw",
     height: "2vh",
-    marginTop: "17vh",
+    marginTop: "15vh",
     marginLeft: "-1.9vw",
     fontSize: "1vw",
     color: "gray",
@@ -57,10 +57,18 @@ let timeblockStyle = {
     visibility: "hidden"
 }
 
+let timeTitleStyle = {
+  width: "15vw",
+  marginTop: "-20vh",
+  color: "gray",
+  visibility: "hidden",
+  fontSize: "1vw",
+  textAlign: "center",
+  marginLeft: "-7vw",
+}
+
 function TimeLine({year: year, month: month, day: day, hour: hour, colors: colors, onMouseOut: onMouseOut,
-                   onMouseOver: onMouseOver}) {
-  const [styles, setStyles] = useState(undefined)
-  const [timebar, setTimeBar] = useState(undefined)
+                   onMouseOver: onMouseOver, titles: titles}) {
 
   return (
     <div style={containerStyle}>
@@ -72,6 +80,7 @@ function TimeLine({year: year, month: month, day: day, hour: hour, colors: color
         <div style={{...timeBarStyle, backgroundColor: c}} onMouseOut={onMouseOut.bind(this, hour * 60 + index * 5)} 
              onMouseOver={onMouseOver} key={index} id={"timeline" + (hour * 60).toString() + index.toString()}>
           <div style={timeblockStyle}> {hour}:{(index <= 1)? "0" + (index * 5):(index * 5)} </div>
+          <div style={timeTitleStyle}> {atob(titles[index])} </div>
         </div>
         )}
       </div>

@@ -21,12 +21,13 @@ function DateBlockInfo(day, onclick) {
   this.onclick = onclick
 }
 
-function TimePointer(year, month, day, hour, colors) {
+function TimePointer(year, month, day, hour, colors, titles) {
   this.year = year
   this.month = month
   this.day = day
   this.hour = hour
   this.colors = colors;
+  this.titles = titles
 }
 
 function App() {
@@ -108,12 +109,17 @@ function App() {
       setCursEnd(minute)
     }
     let timeInfo = e.target.firstChild
-    if(timeInfo && timeInfo.style && timeInfo.style.visibility) timeInfo.style.visibility = "hidden"
+    let titleInfo = e.target.children[1]
+    if(timeInfo && timeInfo.style) timeInfo.style.visibility = "hidden"
+    if(titleInfo && titleInfo.style) titleInfo.style.visibility = "hidden"
+
   }
 
   const handleDragOver = (e) => {
     let timeInfo = e.target.firstChild
-    if(timeInfo && timeInfo.style && timeInfo.style.visibility) timeInfo.style.visibility = "visible"
+    let titleInfo = e.target.children[1]
+    if(timeInfo && timeInfo.style) timeInfo.style.visibility = "visible"
+    if(titleInfo && titleInfo.style) titleInfo.style.visibility = "visible"
   }
 
   const handleRegister = () => {
@@ -223,7 +229,8 @@ function App() {
     let newTimePointer = []
     for(let i = 0; i < 24; i++) {
       let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
-      newTimePointer.push(new TimePointer(year, month, day, i, colors))
+      let titles = ["", "", "", "", "", "", "", "", "", "", "", ""]
+      newTimePointer.push(new TimePointer(year, month, day, i, colors, titles))
     }
     if(modifySchedule) {
       let newDaySchedule = []
@@ -236,6 +243,7 @@ function App() {
             let h = Math.floor(j / 60)
             let m = Math.floor((j % 60) / 5)
             newTimePointer[h].colors[m] = data.Schedules[i].color
+            newTimePointer[h].titles[m] = data.Schedules[i].title
           }
         }
       }
@@ -363,7 +371,7 @@ function App() {
         </form>
         <div className="timeline">
           {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} colors={tp.colors}
-          onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
+          titles={tp.titles} onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
         </div>
         <div className="schedularForm">
           <input className="scheduleTitle" placeholder="add title" onChange={(e) => setTitle(e.target.value)}/>
