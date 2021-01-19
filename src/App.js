@@ -7,6 +7,7 @@ import { CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
 import { SCHEDULE_SUBSCRIPTION } from './graphql/subscription'
 import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
+import ScheduleBox from './components/ScheduleBox'
 import TimeInfoBlock from './components/TimeInfo'
 import TimeLine from './components/TimeLine'
 import { CloudSearchDomain } from 'aws-sdk';
@@ -183,8 +184,6 @@ function App() {
   }, [year, month])
 
   useEffect(() => {
-    console.log("enter useEffect")
-
     let newTimePointer = []
     for(let i = 0; i < 24; i++) {
       let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
@@ -194,7 +193,6 @@ function App() {
       for(let i = 0; i < data.Schedules.length; i++) {
         let tstart = new Date(parseInt(data.Schedules[i].start))
         let tend = new Date(parseInt(data.Schedules[i].end))
-        console.log("useEffect ",i)
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
           for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
             let h = Math.floor(j / 60)
@@ -225,16 +223,15 @@ function App() {
   useEffect(() => {
     subscribeToMore({
       document: SCHEDULE_SUBSCRIPTION,
-      variables: { user: "60053c4fa4a36b441a4c048b" },
+      variables: { user: userID },
       updateQuery: (prev, { subscriptionData }) => {
         if(!subscriptionData.data) return prev
         const newData = subscriptionData.data.Schedule
-        console.log(newData)
         return { ...prev, Schedules: [...prev.Schedules, newData]}
         
       }
     })
-  }, [subscribeToMore])
+  }, [subscribeToMore, userID])
 
   return (
     (event === "login")? (
@@ -263,7 +260,6 @@ function App() {
           {year}. {month}
           <button type="submit" onClick={(e) => setMonth(month + 1)}> {'>>'} </button>
         </div>
-
         <div className="Calendar">
           <div className="week-bar">
             <div className="week-name"> Sun. </div>
@@ -288,6 +284,15 @@ function App() {
             setEvent("scheduling")}}> Add schedule + </button>
           <button> Add election + </button>
         </div>
+        <div className="scheduleEventList">
+          <div className="scheduleBoxList">
+            {data.Schedules.map((s, index) => 
+            <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
+
+            </ScheduleBox> )}
+          </div>
+        </div>
+        
       </div>
 
     ) : (event === "scheduling")? (

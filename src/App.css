@@ -196,3 +196,25 @@
   color: steelblue;
   border: 1px dotted steelblue
 }
+
+.scheduleEventList {
+  width: 80vw;
+  height: 60vh;
+  border: 1px solid #ccc;
+  margin-top: 3vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scheduleBoxList {
+  width: 40vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid #bbb;
+  overflow: auto;
+  padding: 1vw 1vw;
+}

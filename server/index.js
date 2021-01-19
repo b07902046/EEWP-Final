@@ -28,6 +28,10 @@ if (!process.env.MONGO_URL) {
   process.exit(1)
 }
 
+// Schedule.deleteMany({}, (err) => {
+//   console.log("deleted")
+// })
+
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
