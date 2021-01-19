@@ -128,7 +128,7 @@ function App() {
     setEvent("login")
   }
   const handleAddSchedule = () => {
-    if(!startTime || !endTime) {
+    if(startTime === undefined || endTime === undefined) {
       alert("Please select an interval")
       return
     }
@@ -162,6 +162,14 @@ function App() {
     setTimeout(() => {
       setEvent("schedule")
     }, 1000)
+  }
+
+  const handleReturn = () => {
+    setEvent("Calendar")
+  }
+
+  const handleSchedulingReturn = () => {
+    console.log("Hi")
   }
 
   useEffect(() => {
@@ -221,7 +229,7 @@ function App() {
   }, [event])
 
   useEffect(() => {
-    if(mouseStatus === false && cursBeg && cursEnd) {
+    if(mouseStatus === false && cursBeg !== undefined && cursEnd != undefined) {
       let tbeg = cursBeg
       let tend = cursEnd
 
@@ -245,10 +253,6 @@ function App() {
       }
     })
   }, [subscribeToMore, userID])
-
-  const handleReturn = () => {
-    setEvent("Calendar")
-  }
 
   return (
     (event === "login")? (
@@ -332,9 +336,22 @@ function App() {
           <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
           <button type="submit" onClick={handleAddSchedule}> Add </button>
         </div>
+        <button type="submit"> back </button>
       </div>
     ) : (event === "election")? (
-      <div> Hello election </div>
+      <div className="container">
+        <header> ChoChoMeet </header>
+        <h1> {year}. {month}. {day}. </h1>
+        <div className="timeline">
+          {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} colors={tp.colors}
+          onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
+        </div>
+        <div className="schedularForm">
+          <input className="scheduleTitle" placeholder="add title" onChange={(e) => setTitle(e.target.value)}/>
+          <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
+          <button type="submit" onClick={handleAddSchedule}> Add </button>
+        </div>
+      </div>
     ) : (
       <div> Hello others </div>
     )
