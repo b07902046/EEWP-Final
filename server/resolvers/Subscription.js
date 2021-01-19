@@ -12,6 +12,11 @@ const Subscription = {
       subscribe(parent, { user }, { db, pubSub }, info) {
         return pubSub.asyncIterator(`Schedule ${user}`)
       }
+    },
+    Election: {
+      subscribe(parent, { user }, { db, pubSub }, info) {
+        return pubSub.asyncIterator(`Election ${user}`)
+      }
     }
   }
   

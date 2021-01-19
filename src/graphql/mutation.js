@@ -56,3 +56,32 @@ export const CREATE_SCHEDULE_MUTATION = gql`
         }
     }
 `
+export const CREATE_ElECTION_MUTATION = gql`
+    mutation CreateElection(
+        $eventStarter: String!
+        $start: String!
+        $end: String !
+        $expectedInterval: Int!
+        $color: String!
+        $title: String!
+        $content: String
+        $finalStart: String
+        $finalEnd: String
+        $users: [String!]!
+    ){
+        CreateElection(
+            data:{
+                eventStarter: $eventStarter
+                start: $start
+                end: $end
+                expectedInterval: $expectedInterval
+                color: $color
+                title: $title
+                content: $content
+                finalStart: $finalStart
+                finalEnd: $finalEnd
+                users: $users
+            }
+        )
+    }
+`

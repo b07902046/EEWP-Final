@@ -25,3 +25,21 @@ export const SCHEDULE_SUBSCRIPTION = gql`
 
   }
 `
+
+export const ELECTION_SUBSCRIPTION = gql`
+  subscription onElection(
+    $user: String!
+  ) {
+    Election(user: $user){
+      eventStarter
+      start
+      end
+      expectedInterval
+      color
+      title
+      content
+      finalStart
+      finalEnd
+    }
+  }
+`

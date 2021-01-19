@@ -18,10 +18,24 @@ type Schedule {
   content: String
 }
 
+type Election {
+  eventStarter: String!
+  start: String!
+  end: String!
+  expectedInterval: Int!
+  color: String!
+  title: String!
+  content: String
+  finalStart: String
+  finalEnd: String
+  users: [String!]!
+}
+
 type Query {
   Messages(query: String): [Message!]!
   Registers(query: String): [Register!]!
   Schedules(query: String): [Schedule!]!
+  Elections(query: String): [Election!]!
 }
 
 type Mutation {
@@ -29,6 +43,9 @@ type Mutation {
   DeleteMessage(data: String): String
   CreateRegister(data: CreateRegisterInput!): Register!
   CreateSchedule(data: CreateScheduleInput!): Schedule!
+  CreateElection(data: CreateElectionInput!): Election!
+  JoinElection(data: JoinElectionInput!): Election!
+  DecideElection(data: DecideElectionInput!): Election!
 }
 
 input CreateMessageInput {
@@ -51,8 +68,28 @@ input CreateScheduleInput {
   content: String
 }
 
+input CreateElectionInput {
+  eventStarter: String!
+  start: String!
+  end: String!
+  expectedInterval: Int!
+  color: String!
+  title: String!
+  content: String
+  finalStart: String
+  finalEnd: String
+  users: [String!]!
+}
+
+input JoinElectionInput {
+  election_id: String!
+  user_id: String!
+}
+input DecideElectionInput {
+  election_id: String!
+}
 type Subscription {
   Message(username: String): Message!
   Schedule(user: String!): Schedule!
+  Election(user: String!): Election!
 }
-

@@ -21,3 +21,19 @@ export const SCHEDULE_QUERY = gql`
     }
   }
 `
+export const ELECTION_QUERY = gql`
+  query Elections($query: String!) {
+    Elections(query: $query) {
+      eventStarter
+      start
+      end
+      expectedInterval
+      color
+      title
+      content
+      finalStart
+      finalEnd
+      users
+    }
+  }
+`

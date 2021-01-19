@@ -1,5 +1,5 @@
 import Schedule from '../models/schedule'
-
+import Election from '../models/election'
 const Message = require('../models/message')
 const Register = require('../models/register')
 
@@ -30,6 +30,16 @@ const Query = {
       return data.filter(schedule => {
         return schedule.user === args.query
       })
+    }
+  },
+  Elections: async (parent, args, { db }, info) => {
+    let data = await Election.find();
+    // 回傳所有election
+    // 回傳 election.users 含有此 query 的 election
+    if(!args.query) return data
+    else {
+      return data.filter(election => 
+        (election.users.find(user=> user === args.query) !== undefined))
     }
   }
 }
