@@ -169,6 +169,12 @@ function App() {
   }
 
   const handleSchedulingReturn = () => {
+    setStartTime(undefined)
+    setEndTime(undefined)
+    setEvent("schedule")
+  }
+
+  const handleCancel = () => {
     console.log("Hi")
   }
 
@@ -336,7 +342,9 @@ function App() {
           <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
           <button type="submit" onClick={handleAddSchedule}> Add </button>
         </div>
-        <button type="submit"> back </button>
+        <div className="schedulingFooter">
+          <button type="submit" onClick={handleSchedulingReturn}> back </button>
+        </div>
       </div>
     ) : (event === "election")? (
       <div className="container">
