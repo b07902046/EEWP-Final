@@ -2,10 +2,9 @@ import './App.css';
 import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation} from '@apollo/react-hooks'
-import { SCHEDULE_QUERY } from './graphql/query'
+import { SCHEDULE_ELECTION_QUERY } from './graphql/query'
 import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
-import { CREATE_ELECTION_MUTATION } from './graphql/mutation'
-import { SCHEDULE_SUBSCRIPTION } from './graphql/subscription'
+import { SCHEDULE_SUBSCRIPTION, ELECTION_SUBSCRIPTION } from './graphql/subscription'
 import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
 import TimeLine from './components/TimeLine'
@@ -54,9 +53,10 @@ function App() {
   const [daySchedule, setDaySchedule] = useState([])
 
   // graphql
-  const { loading, error, data, subscribeToMore,refetch} = useQuery(SCHEDULE_QUERY, {
+  const { loading, error, data, subscribeToMore,refetch} = useQuery(SCHEDULE_ELECTION_QUERY, {
     variables: {
-      query: userID
+      scheduleQuery: userID,
+      electionQuery: userID
     }
   })
   const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
@@ -211,9 +211,6 @@ function App() {
     let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
     let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
 
-    console.log(tstart)
-    console.log(tend)
-
     addElection({
       variables: {
         eventStarter: userID,
@@ -310,6 +307,16 @@ function App() {
 
   useEffect(() => {
     subscribeToMore({
+      document: ELECTION_SUBSCRIPTION,
+      variables: { user: userID },
+      updateQuery: (prev, { subscriptionData }) => {
+        if(!subscriptionData.data) return prev
+        const newData = subscriptionData.data.Election
+        console.log(newData)
+        return {...prev, Elections: [...prev.Elections, newData]}
+      }
+    },
+    {
       document: SCHEDULE_SUBSCRIPTION,
       variables: { user: userID },
       updateQuery: (prev, { subscriptionData }) => {

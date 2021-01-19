@@ -40,6 +40,8 @@ export const ELECTION_SUBSCRIPTION = gql`
       content
       finalStart
       finalEnd
+      hash
+      users
     }
   }
 `
