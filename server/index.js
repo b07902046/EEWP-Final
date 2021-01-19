@@ -32,6 +32,10 @@ if (!process.env.MONGO_URL) {
 //   console.log("deleted")
 // })
 
+// Register.deleteMany({}, (err) => {
+//   console.log("deleted")
+// })
+
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
