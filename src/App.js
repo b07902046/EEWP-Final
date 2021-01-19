@@ -246,6 +246,10 @@ function App() {
     })
   }, [subscribeToMore, userID])
 
+  const handleReturn = () => {
+    setEvent("Calendar")
+  }
+
   return (
     (event === "login")? (
       <div className="container">
@@ -292,10 +296,12 @@ function App() {
         <header> ChoChoMeet </header>
         <h1> {year}. {month}. {day}. </h1>
         <div className="scheduleFunctional">
-          <button onClick={() => {
+          <button type="submit" onClick={() => {
             setModifySchedule(true)
             setEvent("scheduling")}}> Add schedule + </button>
-          <button> Add election + </button>
+          <button type="submit" onClick={() => {
+            setModifySchedule(true)
+            setEvent("election")}}> Add election + </button>
         </div>
         <div className="scheduleEventList">
           <div className="scheduleBoxList">
@@ -305,7 +311,9 @@ function App() {
             </ScheduleBox> )}
           </div>
         </div>
-        
+        <div className="scheduleFooter">
+          <button type="submit" onClick={handleReturn}> Back </button>
+        </div>
       </div>
 
     ) : (event === "scheduling")? (
@@ -325,6 +333,8 @@ function App() {
           <button type="submit" onClick={handleAddSchedule}> Add </button>
         </div>
       </div>
+    ) : (event === "election")? (
+      <div> Hello election </div>
     ) : (
       <div> Hello others </div>
     )
