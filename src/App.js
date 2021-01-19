@@ -3,16 +3,12 @@ import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation} from '@apollo/react-hooks'
 import { SCHEDULE_QUERY } from './graphql/query'
-import { CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
+import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
+import { CREATE_ELECTION_MUTATION } from './graphql/mutation'
 import { SCHEDULE_SUBSCRIPTION } from './graphql/subscription'
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
-import TimeInfoBlock from './components/TimeInfo'
 import TimeLine from './components/TimeLine'
-import { CloudSearchDomain } from 'aws-sdk';
-import { set } from 'mongoose';
-import { Timeline } from 'antd';
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -64,6 +60,7 @@ function App() {
     }
   })
   const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
+  const [addElection] = useMutation(CREATE_ElECTION_MUTATION)
 
   document.addEventListener('mousedown', () => {
     setMouseStatus(true)
@@ -194,6 +191,50 @@ function App() {
     }
     setStartTime(undefined)
     setEndTime(undefined)
+  }
+
+  const handleAddElection = () => {
+    if(startTime === undefined || endTime === undefined) {
+      alert("Please select an interval")
+      return
+    }
+    if(title === "") {
+      alert("Must fill in title")
+      return 
+    }
+
+    let startHour = Math.floor(startTime / 60)
+    let endHour = Math.floor(endTime / 60)
+    let startMin = startTime % 60
+    let endMin = endTime % 60
+    
+    let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
+    let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
+
+    console.log(tstart)
+    console.log(tend)
+
+    addElection({
+      variables: {
+        eventStarter: userID,
+        start: tstart,
+        end: tend,
+        expectedInterval: 5,
+        color: color,
+        title: title,
+        content: content,
+        users: [userID],
+        hash: "fff"
+      }
+    })
+
+    refetch()
+    setStartTime(undefined)
+    setEndTime(undefined)
+    setModifySchedule(true)
+    setTimeout(() => {
+      setEvent("schedule")
+    }, 1500)
   }
 
   useEffect(() => {
@@ -394,14 +435,23 @@ function App() {
       <div className="container">
         <header> ChoChoMeet </header>
         <h1> {year}. {month}. {day}. </h1>
+        <form>
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)}/>
+        </form>
         <div className="timeline">
           {timePointer.map(tp => <TimeLine year={tp.year} month={tp.month} day={tp.day} hour={tp.hour} colors={tp.colors}
-          onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
+          titles={tp.titles} onMouseOut={handleDragOut} onMouseOver={handleDragOver} key={tp.day * 24 + tp.hour}></TimeLine>)}
         </div>
         <div className="schedularForm">
           <input className="scheduleTitle" placeholder="add title" onChange={(e) => setTitle(e.target.value)}/>
           <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
-          <button type="submit" onClick={handleAddSchedule}> Add </button>
+          <div className="schedularFormFunctional">
+            <button type="submit" onClick={handleCancel}> Cancel </button>
+            <button type="submit" onClick={handleAddElection}> Add </button>
+          </div>
+        </div>
+        <div className="schedulingFooter">
+          <button type="submit" onClick={handleSchedulingReturn}> Back </button>
         </div>
       </div>
     ) : (

@@ -68,6 +68,7 @@ export const CREATE_ElECTION_MUTATION = gql`
         $finalStart: String
         $finalEnd: String
         $users: [String!]!
+        $hash: String!
     ){
         CreateElection(
             data:{
@@ -81,7 +82,12 @@ export const CREATE_ElECTION_MUTATION = gql`
                 finalStart: $finalStart
                 finalEnd: $finalEnd
                 users: $users
+                hash: $hash
             }
-        )
+        ) {
+            users
+            start
+            hash
+        }
     }
 `

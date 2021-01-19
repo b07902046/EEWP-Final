@@ -36,6 +36,10 @@ if (!process.env.MONGO_URL) {
 //   console.log("deleted")
 // })
 
+// Election.deleteMany({}, (err) => {
+//   console.log(err)
+// })
+
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true

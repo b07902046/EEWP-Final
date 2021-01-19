@@ -29,6 +29,7 @@ type Election {
   finalStart: String
   finalEnd: String
   users: [String!]!
+  hash: String!
 }
 
 type Query {
@@ -79,6 +80,7 @@ input CreateElectionInput {
   finalStart: String
   finalEnd: String
   users: [String!]!
+  hash: String!
 }
 
 input JoinElectionInput {

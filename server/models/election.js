@@ -16,7 +16,7 @@ const ElectionSchema = new Schema({
     },
     expectedInterval: {
         type: Number,
-        required: [true, "Color field is required."]
+        required: [true, "Interval field is required."]
     },
     color: {
         type: String,
@@ -37,6 +37,10 @@ const ElectionSchema = new Schema({
     finalEnd:{
         type: Date,
         required: false
+    },
+    hash:{
+        type: String,
+        required: [true, "Hash field is required"]
     },
     users:[{type:String}]
 
