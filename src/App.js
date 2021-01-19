@@ -139,6 +139,10 @@ function App() {
       alert("Please select an interval")
       return
     }
+    if(title === "") {
+      alert("Must fill in title")
+      return 
+    }
 
     let startHour = Math.floor(startTime / 60)
     let endHour = Math.floor(endTime / 60)
@@ -159,16 +163,13 @@ function App() {
       }
     })
 
-    let ss = Date.parse(year, month, day, startHour, startMin).toString()
-    let es = Date.parse(year, month, day, endHour, endMin).toString()
-
     refetch()
     setStartTime(undefined)
     setEndTime(undefined)
     setModifySchedule(true)
     setTimeout(() => {
       setEvent("schedule")
-    }, 1000)
+    }, 1500)
   }
 
   const handleReturn = () => {
@@ -193,7 +194,6 @@ function App() {
     }
     setStartTime(undefined)
     setEndTime(undefined)
-
   }
 
   useEffect(() => {
@@ -252,10 +252,10 @@ function App() {
     }
     setTimePointer(newTimePointer)
     setModifySchedule(false)
-  }, [event])
+  }, [event, data])
 
   useEffect(() => {
-    if(mouseStatus === false && cursBeg !== undefined && cursEnd != undefined) {
+    if(mouseStatus === false && cursBeg !== undefined && cursEnd !== undefined) {
       let tbeg = cursBeg
       let tend = cursEnd
 
@@ -265,7 +265,7 @@ function App() {
       setCursBeg(undefined)
       setCursEnd(undefined)
     }
-  }, [mouseStatus])
+  }, [mouseStatus, cursBeg, cursEnd])
 
   useEffect(() => {
     subscribeToMore({
@@ -279,6 +279,8 @@ function App() {
       }
     })
   }, [subscribeToMore, userID])
+
+  
 
   return (
     (event === "login")? (
@@ -344,6 +346,8 @@ function App() {
         <div className="scheduleFunctional">
           <button type="submit" onClick={() => {
             setModifySchedule(true)
+            setTitle("")
+            setContent("")
             setEvent("scheduling")}}> Add schedule + </button>
           <button type="submit" onClick={() => {
             setModifySchedule(true)
@@ -351,10 +355,11 @@ function App() {
         </div>
         <div className="scheduleEventList">
           <div className="scheduleBoxList">
-            {daySchedule.map((s, index) => 
-            <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
-
-            </ScheduleBox> )}
+            {(loading)? ("loading") : (
+              daySchedule.map((s, index) => 
+              <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
+              </ScheduleBox> )
+            )}
           </div>
         </div>
         <div className="scheduleFooter">
@@ -382,7 +387,7 @@ function App() {
           </div>
         </div>
         <div className="schedulingFooter">
-          <button type="submit" onClick={handleSchedulingReturn}> back </button>
+          <button type="submit" onClick={handleSchedulingReturn}> Back </button>
         </div>
       </div>
     ) : (event === "election")? (
