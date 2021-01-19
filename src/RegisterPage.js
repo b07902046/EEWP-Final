@@ -43,7 +43,7 @@ function RegisterPage({handleClickBack}) {
         <input type="password" onChange={(e) => setCheckPwd(e.target.value)} placeholder="Enter new Password again" name="psw" 
               onKeyUp={handleRegisterInput} required />
         <div className="LoginButton">
-          <button type="submit"> Sign Up </button>
+          <button type="submit" onClick={handleRegisterInput.bind(this, "button")}> Sign Up </button>
           <button type="submit" onClick={handleClickBack}> Back </button>
         </div>
       </div>

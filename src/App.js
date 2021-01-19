@@ -11,6 +11,7 @@ import ScheduleBox from './components/ScheduleBox'
 import TimeInfoBlock from './components/TimeInfo'
 import TimeLine from './components/TimeLine'
 import { CloudSearchDomain } from 'aws-sdk';
+import { set } from 'mongoose';
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -52,6 +53,7 @@ function App() {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [color, setColor] = useState("#00FFdd")
+  const [daySchedule, setDaySchedule] = useState([])
 
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(SCHEDULE_QUERY, {
@@ -118,6 +120,7 @@ function App() {
   }
 
   const handleClickDateBlock = (day, e) => {
+    setModifySchedule(true)
     setEvent("schedule")
     setDay(day)
   }
@@ -149,12 +152,16 @@ function App() {
       }
     })
 
-    refetch()
-    
+    let ss = Date.parse(year, month, day, startHour, startMin).toString()
+    let es = Date.parse(year, month, day, endHour, endMin).toString()
 
+    refetch()
     setStartTime(undefined)
     setEndTime(undefined)
-    setEvent("schedule")
+    setModifySchedule(true)
+    setTimeout(() => {
+      setEvent("schedule")
+    }, 1000)
   }
 
   useEffect(() => {
@@ -186,16 +193,19 @@ function App() {
   }, [year, month])
 
   useEffect(() => {
+    // initialize time pointer
     let newTimePointer = []
     for(let i = 0; i < 24; i++) {
       let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
       newTimePointer.push(new TimePointer(year, month, day, i, colors))
     }
     if(modifySchedule) {
+      let newDaySchedule = []
       for(let i = 0; i < data.Schedules.length; i++) {
         let tstart = new Date(parseInt(data.Schedules[i].start))
         let tend = new Date(parseInt(data.Schedules[i].end))
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
+          newDaySchedule.push(data.Schedules[i])
           for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
             let h = Math.floor(j / 60)
             let m = Math.floor((j % 60) / 5)
@@ -203,9 +213,10 @@ function App() {
           }
         }
       }
+      newDaySchedule.sort((a, b) => {return parseInt(a.start) - parseInt(b.start)})
+      setDaySchedule(newDaySchedule)
     }
     setTimePointer(newTimePointer)
-
     setModifySchedule(false)
   }, [event])
 
@@ -288,7 +299,7 @@ function App() {
         </div>
         <div className="scheduleEventList">
           <div className="scheduleBoxList">
-            {data.Schedules.map((s, index) => 
+            {daySchedule.map((s, index) => 
             <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
 
             </ScheduleBox> )}
