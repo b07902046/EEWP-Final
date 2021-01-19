@@ -12,6 +12,7 @@ import TimeInfoBlock from './components/TimeInfo'
 import TimeLine from './components/TimeLine'
 import { CloudSearchDomain } from 'aws-sdk';
 import { set } from 'mongoose';
+import { Timeline } from 'antd';
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -175,7 +176,18 @@ function App() {
   }
 
   const handleCancel = () => {
-    console.log("Hi")
+    if(startTime === undefined || endTime === undefined) {
+      return
+    }
+    for(let i = startTime; i <= endTime; i+=5) {
+      let h = Math.floor(i / 60)
+      let m = Math.floor((i % 60) / 5)
+      let eid = "timeline" + (h * 60).toString() + m.toString()
+      document.getElementById(eid).style.backgroundColor = timePointer[h].colors[m]
+    }
+    setStartTime(undefined)
+    setEndTime(undefined)
+
   }
 
   useEffect(() => {
@@ -283,9 +295,25 @@ function App() {
         <header> ChoChoMeet </header>
         <h1> Calendar </h1>
         <div className="time-info">
-          <button type="submit" onClick={(e) => setMonth(month - 1)}> {'<<'} </button>
+          <button type="submit" onClick={(e) => {
+            if(month === 1) {
+              setMonth(12)
+              setYear(year - 1)
+            }
+            else {
+              setMonth(month - 1)
+            }
+          }}> {"<<"} </button>
           {year}. {month}
-          <button type="submit" onClick={(e) => setMonth(month + 1)}> {'>>'} </button>
+          <button type="submit" onClick={(e) => {
+            if(month === 12) {
+              setMonth(1)
+              setYear(year + 1)
+            }
+            else {
+              setMonth(month + 1)
+            }
+          }}> {">>"} </button>
         </div>
         <div className="Calendar">
           <div className="week-bar">
@@ -340,7 +368,10 @@ function App() {
         <div className="schedularForm">
           <input className="scheduleTitle" placeholder="add title" onChange={(e) => setTitle(e.target.value)}/>
           <textarea className="scheduleContent" placeholder="add contents" rows="5" onChange={(e) => setContent(e.target.value)}/>
-          <button type="submit" onClick={handleAddSchedule}> Add </button>
+          <div className="schedularFormFunctional">
+            <button type="submit" onClick={handleCancel}> Cancel </button>
+            <button type="submit" onClick={handleAddSchedule}> Add </button>
+          </div>
         </div>
         <div className="schedulingFooter">
           <button type="submit" onClick={handleSchedulingReturn}> back </button>
@@ -361,7 +392,7 @@ function App() {
         </div>
       </div>
     ) : (
-      <div> Hello others </div>
+      <div> wait... </div>
     )
   )
 }

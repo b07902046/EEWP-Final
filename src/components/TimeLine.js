@@ -57,7 +57,8 @@ let timeblockStyle = {
     visibility: "hidden"
 }
 
-function TimeLine({year: year, month: month, day: day, hour: hour, colors: colors, onMouseOut: onMouseOut, onMouseOver: onMouseOver}) {
+function TimeLine({year: year, month: month, day: day, hour: hour, colors: colors, onMouseOut: onMouseOut,
+                   onMouseOver: onMouseOver}) {
   const [styles, setStyles] = useState(undefined)
   const [timebar, setTimeBar] = useState(undefined)
 
@@ -69,7 +70,7 @@ function TimeLine({year: year, month: month, day: day, hour: hour, colors: color
       <div style={timeBarContainer}>
         {colors.map((c, index) => 
         <div style={{...timeBarStyle, backgroundColor: c}} onMouseOut={onMouseOut.bind(this, hour * 60 + index * 5)} 
-             onMouseOver={onMouseOver}>
+             onMouseOver={onMouseOver} key={index} id={"timeline" + (hour * 60).toString() + index.toString()}>
           <div style={timeblockStyle}> {hour}:{(index <= 1)? "0" + (index * 5):(index * 5)} </div>
         </div>
         )}
