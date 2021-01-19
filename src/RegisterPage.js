@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react'
 
 const client = new WebSocket('ws://localhost:5000')
 
-function RegisterPage() {
+function RegisterPage({handleClickBack}) {
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [checkpwd, setCheckPwd] = useState('')
@@ -44,7 +44,7 @@ function RegisterPage() {
               onKeyUp={handleRegisterInput} required />
         <div className="LoginButton">
           <button type="submit"> Sign Up </button>
-          <button type="submit"> Back </button>
+          <button type="submit" onClick={handleClickBack}> Back </button>
         </div>
       </div>
     </div>

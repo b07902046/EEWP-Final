@@ -121,7 +121,9 @@ function App() {
     setEvent("schedule")
     setDay(day)
   }
-
+  const handleRegisterBack = ()=>{
+    setEvent("login")
+  }
   const handleAddSchedule = () => {
     if(!startTime || !endTime) {
       alert("Please select an interval")
@@ -250,7 +252,7 @@ function App() {
         </div>
       </div>
     ) : (event === "register")? (
-      <RegisterPage></RegisterPage>
+      <RegisterPage handleClickBack={handleRegisterBack}></RegisterPage>
     ) : (event === "Calendar")? (
       <div className="container">
         <header> ChoChoMeet </header>
