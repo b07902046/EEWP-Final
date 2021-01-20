@@ -169,7 +169,7 @@ function Vote({hash, userID, handleReturnVote}) {
                     let h = Math.floor(j / 60)
                     let m = Math.floor((j % 60 ) / 5)
                     if(h >= sh && h <= eh) {
-                      if(newVoteInfo[h - sh].colors[m] === "") newVoteInfo[h - sh].colors[m] = data.Schedules[i].color + "80"
+                      if(newVoteInfo[h - sh].colors[m] === "") newVoteInfo[h - sh].colors[m] = data.Schedules[i].color + "40"
                       newVoteInfo[h - sh].titles[m] = data.Schedules[i].title
                     } 
                 }             
@@ -185,9 +185,11 @@ function Vote({hash, userID, handleReturnVote}) {
       <header> ChoChoMeet </header>
       <h1> {year}. {month}. {day}. </h1>
       <h3>
-        {startTime.getHours()}:{startTime.getMinutes()}
+        {(startTime.getHours() < 10)? ("0" + startTime.getHours()) : startTime.getHours()}:
+        {(startTime.getMinutes() < 10)? ("0" + startTime.getMinutes()): startTime.getMinutes()}
         {" ~ "}
-        {endTime.getHours()}:{endTime.getMinutes()}
+        {(endTime.getHours() < 10)? ("0" + endTime.getHours()) : endTime.getHours()}:
+        {(endTime.getMinutes() < 10)? ("0" + endTime.getMinutes()): endTime.getMinutes()}
       </h3>
       <div className="timeline">
         {voteInfo.map((vi, index) => <TimeLine year={year} month={month} day={day} hour={vi.hour} colors={vi.colors}

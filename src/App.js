@@ -121,8 +121,10 @@ function App() {
       e.target.style.backgroundColor = color
       if(cursBeg === undefined) {
         setCursBeg(minute)
+        setCursEnd(minute)
       }
-      setCursEnd(minute)
+      if(minute < cursBeg) setCursBeg(minute)
+      if(minute > cursEnd) setCursEnd(minute)
     }
     let timeInfo = e.target.firstChild
     let titleInfo = e.target.children[1]
@@ -188,6 +190,8 @@ function App() {
     //refetch()
     setStartTime(undefined)
     setEndTime(undefined)
+    setCursBeg(undefined)
+    setCursEnd(undefined)
     // setModifySchedule(true)
     // setEvent("schedule")
     setTimeout(() => {
@@ -221,6 +225,8 @@ function App() {
     }
     setStartTime(undefined)
     setEndTime(undefined)
+    setCursBeg(undefined)
+    setCursEnd(undefined)
   }
 
   const handleAddElection = () => {
@@ -354,7 +360,6 @@ function App() {
       
       // find day election
       let newDayElection = []
-      console.log(Elections)
       Elections.map((ele)=>{
         let tstart = new Date(ele.start)
         let tend = new Date(ele.end)
@@ -380,9 +385,6 @@ function App() {
 
       setStartTime(tbeg)
       setEndTime(tend)
-
-      setCursBeg(undefined)
-      setCursEnd(undefined)
     }
   }, [mouseStatus, cursBeg, cursEnd])
 

@@ -77,7 +77,7 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
             </div>
             <div style={userStyle}>
                 <header style={{fontSize: "1.2vw"}}> Participants: </header>
-                {participants.map((p, index) => <> {p} <br/></>)}
+                {participants.map((p, index) => <div key={index}> {p} <br/></div>)}
             </div>
         </div>
     )
