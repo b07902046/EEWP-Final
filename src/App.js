@@ -10,6 +10,7 @@ import ScheduleBox from './components/ScheduleBox'
 import ElectionBox from './components/ElectionBox'
 import TimeLine from './components/TimeLine'
 import VoteJoin from './VoteJoin'
+import Vote from './Vote'
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -322,7 +323,6 @@ function App() {
         let tend = new Date(parseInt(data.Elections[i].end))
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
           newDayElection.push(data.Elections[i])
-          console.log(data.Elections[i].hash)
         }
       }
       newDayElection.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
@@ -510,7 +510,9 @@ function App() {
       </div>
     ) : (event === "voteJoin")? (
       <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept}></VoteJoin>
-      ) : (
+      ) : (event === "vote")? (
+      <Vote hash={hash} userID={userID}></Vote>
+    ) : (
       <div> wait... </div>
     )
   )

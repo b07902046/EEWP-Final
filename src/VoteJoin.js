@@ -1,8 +1,7 @@
 import './App.css';
 import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { ELECTIONHASH_QUERY } from './graphql/query'
-import { JOIN_ELECTION } from './graphql/mutation'
 
 const redColor = "rgb(241, 101, 101)"
 const greenColor = "rgb(60, 179, 113)"
@@ -11,7 +10,6 @@ function VoteJoin({hash, userID, handleOnAccept}) {
   const { loading, error, data } = useQuery(ELECTIONHASH_QUERY, {
     variables: { hash: hash }
   })
-  const [joinElection] = useMutation(JOIN_ELECTION)
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState(new Date())
   const [title, setTitle] = useState("")
@@ -73,7 +71,7 @@ function VoteJoin({hash, userID, handleOnAccept}) {
       </div>
       <div className="choiceBlock">
           <button id="accept" onClick={handleOnAccept.bind(this, userID, hash)}> Accept </button>
-          <button id="reject" onClick={handleReject.bind}> Reject </button>
+          <button id="reject" onClick={handleReject}> Reject </button>
       </div>
     </div>
   )
