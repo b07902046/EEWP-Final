@@ -11,7 +11,7 @@ function VoteInfo(hour, colors, titles) {
     this.titles = titles
 }
 
-function Vote({hash, userID}) {
+function Vote({hash, userID, handleReturnVote}) {
     const { loading, error, data } = useQuery(ELECTIONHASH_SCHEDULE_QUERY, {
       variables: { hash: hash, user: userID}
     })
@@ -87,6 +87,7 @@ function Vote({hash, userID}) {
         }
       })
       setVotes([])
+      alert("add successfully")
     }
 
     const handleCancel = () => {
@@ -99,14 +100,6 @@ function Vote({hash, userID}) {
           document.getElementById(eid).style.backgroundColor = voteInfo[h - sh].colors[m]
         }
       }
-      // for(let i = startTime; i <= endTime; i+=5) {
-      //   let h = Math.floor(i / 60)
-      //   let m = Math.floor((i % 60) / 5)
-      //   let eid = "timeline" + (h * 60).toString() + m.toString()
-      //   document.getElementById(eid).style.backgroundColor = timePointer[h].colors[m]
-      // }
-      // setStartTime(undefined)
-      // setEndTime(undefined)
     }
 
     useEffect(() => {
@@ -202,6 +195,7 @@ function Vote({hash, userID}) {
       </div>
       <div className="voteFunctional">
         <button className="vote-button" type="submit" onClick={handleCancel}> cancel </button>
+        <button className="vote-button" type="submit" onClick={handleReturnVote}> back </button>
         <button className="vote-button" type="submit" onClick={handleAddVote}> vote </button>
       </div>
     </div>

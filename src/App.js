@@ -124,7 +124,6 @@ function App() {
     let titleInfo = e.target.children[1]
     if(timeInfo && timeInfo.style) timeInfo.style.visibility = "hidden"
     if(titleInfo && titleInfo.style) titleInfo.style.visibility = "hidden"
-
   }
 
   const handleDragOver = (e) => {
@@ -260,6 +259,10 @@ function App() {
       }
     })
     setEvent("vote")
+  }
+
+  const handleReturnVote = () => {
+    setEvent("voteJoin")
   }
 
   useEffect(() => {
@@ -400,7 +403,7 @@ function App() {
             else {
               setMonth(month - 1)
             }
-          }}> {"<<"} </button>
+          }}> &#8249; </button>
           {year}. {month}
           <button type="submit" onClick={(e) => {
             if(month === 12) {
@@ -410,7 +413,7 @@ function App() {
             else {
               setMonth(month + 1)
             }
-          }}> {">>"} </button>
+          }}> &#8250; </button>
         </div>
         <div className="Calendar">
           <div className="week-bar">
@@ -511,7 +514,7 @@ function App() {
     ) : (event === "voteJoin")? (
       <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept}></VoteJoin>
       ) : (event === "vote")? (
-      <Vote hash={hash} userID={userID}></Vote>
+      <Vote hash={hash} userID={userID} handleReturnVote={handleReturnVote}></Vote>
     ) : (
       <div> wait... </div>
     )
