@@ -187,6 +187,8 @@ function App() {
       title: btoa(title),
       content: (content === "")? (null) : (btoa(content))   
     })
+
+    
     //refetch()
     setStartTime(undefined)
     setEndTime(undefined)
@@ -194,6 +196,7 @@ function App() {
     setCursEnd(undefined)
     // setModifySchedule(true)
     // setEvent("schedule")
+
     setTimeout(() => {
       setModifySchedule(true)
       setEvent("schedule")
@@ -329,11 +332,17 @@ function App() {
   useEffect(() => {
     // initialize time pointer
     let newTimePointer = []
-    for(let i = 0; i < 24; i++) {
-      let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
-      let titles = ["", "", "", "", "", "", "", "", "", "", "", ""]
-      newTimePointer.push(new TimePointer(year, month, day, i, colors, titles))
+    if(timePointer.length === 0) {
+      for(let i = 0; i < 24; i++) {
+        let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        let titles = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        newTimePointer.push(new TimePointer(year, month, day, i, colors, titles))
+      }
     }
+    else {
+      newTimePointer = timePointer.map(tp => tp)
+    }
+
     if(modifySchedule) {
       let newDaySchedule = []
       Schedules.map((ele,index)=>{
