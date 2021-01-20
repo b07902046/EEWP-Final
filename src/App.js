@@ -27,6 +27,7 @@ function TimePointer(year, month, day, hour, colors, titles) {
   this.hour = hour
   this.colors = colors;
   this.titles = titles
+  this.schedules = []
 }
 
 function App() {
@@ -58,7 +59,6 @@ function App() {
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
   const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection}=useSch()
-  const [realID,setRealID] = useState(undefined)
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
     variables: {
@@ -82,11 +82,15 @@ function App() {
     const [task, payload] = JSON.parse(message.data);
     if(task === "loginRes") {
       if(payload === "Fail") {
-        alert("Wrong account or password")
         setPassword("")
+        let msg = document.getElementById("login-message")
+        msg.innerHTML = "wrong account or password!"
+        msg.style.display = "inline"
+        setTimeout(() => {
+          msg.style.display = "none"
+        }, 2000)
       }
       else {
-        setRealID(payload)
         setUserID(account)
         let url = window.location.search
         let urlParam = new URLSearchParams(url)
@@ -110,10 +114,25 @@ function App() {
         client.send(JSON.stringify(rgtrData))
       }
       else {
-        if(account === "") alert("account form must be filled")
-        else alert("Password form must be filled")
+        let msg = document.getElementById("login-message")
+        msg.innerHTML = "must fill in account and password!"
+        msg.style.display = "inline"
+        setTimeout(() => {
+          msg.style.display = "none"
+        }, 2000)
+        
       }
     }
+  }
+
+  const handleMessageBox = (msg) => {
+    console.log(msg)
+    let msgbox = document.getElementById("login-message")
+    msgbox.innerHTML = msg
+    msgbox.style.display = "inline"
+    setTimeout(() => {
+      msgbox.style.display = "none"
+    }, 2000)
   }
 
   const handleDragOut = (minute, e) => {
@@ -154,11 +173,11 @@ function App() {
   }
   const handleAddSchedule = () => {
     if(startTime === undefined || endTime === undefined) {
-      alert("Please select an interval")
+      handleMessageBox("please select intervals")
       return
     }
     if(title === "") {
-      alert("Must fill in title")
+      handleMessageBox("please fill in the title")
       return 
     }
 
@@ -169,16 +188,7 @@ function App() {
     
     let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
     let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
-    // addSchedule({
-    //   variables: {
-    //     user: userID,
-    //     start: tstart,
-    //     end: tend,
-    //     color: color,
-    //     title: btoa(title),
-    //     content: (content === "")? (null) : (btoa(content))
-    //   }
-    // })
+
     createSchedule({
       user: userID,
       start: tstart,
@@ -188,19 +198,21 @@ function App() {
       content: (content === "")? (null) : (btoa(content))   
     })
 
-    
-    //refetch()
+    let msgbox = document.getElementById("login-message")
+    msgbox.innerHTML = "Successfully adding schedule!!!"
+    msgbox.style.display = "inline"
+
     setStartTime(undefined)
     setEndTime(undefined)
     setCursBeg(undefined)
     setCursEnd(undefined)
-    // setModifySchedule(true)
-    // setEvent("schedule")
 
     setTimeout(() => {
+      msgbox.style.display = "none"
       setModifySchedule(true)
       setEvent("schedule")
     }, 1500)
+
   }
 
   const handleReturn = () => {
@@ -252,19 +264,6 @@ function App() {
 
     let hashValue = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
-    // addElection({
-    //   variables: {
-    //     eventStarter: userID,
-    //     start: tstart,
-    //     end: tend,
-    //     expectedInterval: ((endHour - startHour) * 60 + (endMin - startMin) / 5) + 1,
-    //     color: color,
-    //     title: btoa(title),
-    //     content: (content === "")? (null) : (btoa(content)),
-    //     users: [userID],
-    //     hash: hashValue
-    //   }
-    // })
     createElection({
       eventStarter: userID,
       start: tstart,
@@ -277,11 +276,16 @@ function App() {
       hash: hashValue
     })
     //refetch()
+    let msgbox = document.getElementById("login-message")
+    msgbox.innerHTML = "Successfully creating election!!!"
+    msgbox.style.display = "inline"
+
     setStartTime(undefined)
     setEndTime(undefined)
     
     //setEvent("schedule")
     setTimeout(() => {
+      msgbox.style.display = "none"
       setModifySchedule(true)
       setEvent("schedule")
     }, 1500)
@@ -361,9 +365,6 @@ function App() {
           let t1 = new Date(a.start)
           let t2 = new Date(b.start)
           return t1.getTime() - t2.getTime() })
-        // newDaySchedule.sort((a, b) => { 
-        //   console.log(a.start.getTime()-b.start.getTime())
-        //   return a.start.getTime() - b.start.getTime() })
         setDaySchedule(newDaySchedule)
       })
       
@@ -414,11 +415,12 @@ function App() {
     (event === "login")? (
       <div className="container">
         <header> ChoChoMeet </header>
+        <div className="message-box" id="login-message"></div>
         <div className="LoginForm">
           <input type="text" onChange={(e) => setAccount(e.target.value)} placeholder="Enter account" name="account" 
                 onKeyUp={handleLoginInput} required/>
           <br/>
-          <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password" name="psw" 
+          <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" name="psw" 
                 onKeyUp={handleLoginInput} value={password} required />
           <div className="LoginButton">
             <button type="submit" onClick={handleLoginInput.bind(this, 'button')}> Login </button>
@@ -506,6 +508,7 @@ function App() {
     ) : (event === "scheduling")? (
       <div className="container">
         <header> ChoChoMeet </header>
+        <div className="message-box" id="login-message"></div>
         <h1> {year}. {month}. {day}. </h1>
         <form>
           <input type="color" value={color} onChange={(e) => setColor(e.target.value)}/>
@@ -529,6 +532,7 @@ function App() {
     ) : (event === "election")? (
       <div className="container">
         <header> ChoChoMeet </header>
+        <div className="message-box" id="login-message"></div>
         <h1> {year}. {month}. {day}. </h1>
         <form>
           <input type="color" value={color} onChange={(e) => setColor(e.target.value)}/>

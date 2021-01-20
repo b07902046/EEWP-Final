@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react'
+import COPY from '../images/copy.png'
 
 let container = {
     width: "30vw",
@@ -77,7 +78,7 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
             </div>
             <div style={userStyle}>
                 <header style={{fontSize: "1.2vw"}}> Participants: </header>
-                {participants.map((p, index) => <div key={index}> {p} <br/></div>)}
+                {participants.map((p, index) => p + " / ")}
             </div>
         </div>
     )

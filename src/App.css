@@ -10,6 +10,22 @@
   font-family: Lucida Console, Courier, monospace;
 }
 
+.message-box {
+  width: 20vw;
+  display: none;
+  position: fixed;
+  margin-top: 10vh;
+  margin-left: -23vw;
+  color: red;
+  font-family: Lucida Console, Courier, monospace;
+  font-size: 1.2vw;
+  text-align: center;
+  padding: 2vh 2vh;
+  background-color: #eee; 
+  transition-duration: 0.5s;
+  border-radius: 1vh;
+}
+
 .LoginForm {
   display: flex;
   flex-direction: column;

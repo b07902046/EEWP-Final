@@ -66,7 +66,7 @@ function VoteJoin({hash, userID, handleOnAccept}) {
           </div>
           <div className="electionInfoItem">
             <header> Participants: </header>
-            { users.map((user, index) => <p key={index}> {user} </p>)}
+            { users.map((user, index) => user + " / ")}
           </div>
       </div>
       <div className="choiceBlock">
