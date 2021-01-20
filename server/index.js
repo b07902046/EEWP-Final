@@ -108,24 +108,14 @@ db.once('open', () => {
             if(err){
               sendData(["fail",err.message])
             }
+            let data = await Schedule.find({user:payload.user},null).exec();
+            sendData(["createSchedule",data])
           })
-          let data = await Schedule.find({user:payload.user},null).exec();
-          let date_schedule = data.filter((e)=>((e.start.getFullYear() === payload.start.getFullYear() &&(e.start.getMonth() === payload.start.getMonth()) && (e.start.getDate() === payload.start.getDate()))))
-          sendData(["createSchedule",date_schedule])
           break 
         }
         case "querySchedule": {
-
-          let data = await Schedule.find({}, null).exec();
-          if(payload === undefined){
-            sendData(["querySchedule",data])
-          }
-          else{
-            let data = data.filter(schedule => {
-        return schedule.user === payload.id})
-            let date_schedule = data.filter((e)=>((e.start.getFullYear() === payload.year.getFullYear() &&(e.start.getMonth() === payload.month.getMonth()) && (e.start.getDate() === payload.date.getDate()))))
-            sendData(["querySchedule",date_schedule])
-          }
+          let data = await Schedule.find({user:payload.user})
+          sendData(["querySchedule",data])
           break
         }
         case "deleteSchedule":{
@@ -140,8 +130,7 @@ db.once('open', () => {
               sendData(['fail',err.message])
             }
             let data = await Schedule.find({user:user_id},null).exec();
-            let date_schedule = data.filter((e)=>((e.start.getFullYear() === base.getFullYear() &&(e.start.getMonth() === base.getMonth()) && (e.start.getDate() === base.start.getDate()))))
-            sendData(["deleteSchedule",date_schedule])
+            sendData(["deleteSchedule",data])
           })
           break
         }
@@ -162,8 +151,7 @@ db.once('open', () => {
             sendData(["queryElection",data])
           }
           else{
-            let msg = data.filter(schedule => {
-        return schedule.user === data.id})
+            let msg =data.filter(election => (election.users.find(user=> user === payload.user) !== undefined))
             sendData(["queryElection",msg])
           }
           break

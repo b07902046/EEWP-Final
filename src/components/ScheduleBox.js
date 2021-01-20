@@ -37,8 +37,8 @@ let timeStyle = {
 
 
 function ScheduleBox({start: start, end: end, title: title, content: content, color: color}) {
-    const [startTime, setStartTime] = useState(new Date(parseInt(start)))
-    const [endTime, setEndTime] = useState(new Date(parseInt(end)))
+    const [startTime, setStartTime] = useState(new Date(start))
+    const [endTime, setEndTime] = useState(new Date(end))
 
     return (
         <div style={container}>

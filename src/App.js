@@ -2,7 +2,7 @@ import './App.css';
 import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation} from '@apollo/react-hooks'
-import { SCHEDULE_ELECTION_QUERY } from './graphql/query'
+import { SCHEDULE_ELECTION_QUERY ,ELECTION_QUERY} from './graphql/query'
 import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION, JOIN_ELECTION } from './graphql/mutation'
 import { SCHEDULE_SUBSCRIPTION, ELECTION_SUBSCRIPTION } from './graphql/subscription'
 import DateBlock from './components/DateBlock'
@@ -10,6 +10,7 @@ import ScheduleBox from './components/ScheduleBox'
 import ElectionBox from './components/ElectionBox'
 import TimeLine from './components/TimeLine'
 import VoteJoin from './VoteJoin'
+import useSch from './useSch'
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -55,16 +56,16 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
-
+  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection}=useSch()
+  const [realID,setRealID] = useState(undefined)
   // graphql
-  const { loading, error, data, subscribeToMore,refetch} = useQuery(SCHEDULE_ELECTION_QUERY, {
+  const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
     variables: {
-      scheduleQuery: userID,
-      electionQuery: userID
+      query: userID
     }
   })
-  const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
-  const [addElection] = useMutation(CREATE_ElECTION_MUTATION)
+  //const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
+  //const [addElection] = useMutation(CREATE_ElECTION_MUTATION)
   const [joinElection] = useMutation(JOIN_ELECTION)
 
 
@@ -84,6 +85,7 @@ function App() {
         setPassword("")
       }
       else {
+        setRealID(payload)
         setUserID(account)
         let url = window.location.search
         let urlParam = new URLSearchParams(url)
@@ -92,6 +94,8 @@ function App() {
           setEvent("voteJoin")
         }
         else {
+          querySchedule({ user:account })
+          queryElection({user:account})
           setEvent("Calendar")
         }
       }
@@ -142,6 +146,7 @@ function App() {
     setEvent("schedule")
     setDay(day)
   }
+
   const handleRegisterBack = ()=>{
     setEvent("login")
   }
@@ -162,29 +167,39 @@ function App() {
     
     let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
     let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
-
-    addSchedule({
-      variables: {
-        user: userID,
-        start: tstart,
-        end: tend,
-        color: color,
-        title: btoa(title),
-        content: (content === "")? (null) : (btoa(content))
-      }
+    // addSchedule({
+    //   variables: {
+    //     user: userID,
+    //     start: tstart,
+    //     end: tend,
+    //     color: color,
+    //     title: btoa(title),
+    //     content: (content === "")? (null) : (btoa(content))
+    //   }
+    // })
+    createSchedule({
+      user: userID,
+      start: tstart,
+      end: tend,
+      color: color,
+      title: btoa(title),
+      content: (content === "")? (null) : (btoa(content))   
     })
-
-    refetch()
+    //refetch()
     setStartTime(undefined)
     setEndTime(undefined)
-    setModifySchedule(true)
+    // setModifySchedule(true)
+    // setEvent("schedule")
     setTimeout(() => {
+      setModifySchedule(true)
       setEvent("schedule")
     }, 1500)
   }
 
   const handleReturn = () => {
     setEvent("Calendar")
+    querySchedule({ user:account })
+    queryElection({ user:account })
   }
 
   const handleSchedulingReturn = () => {
@@ -228,25 +243,37 @@ function App() {
 
     let hashValue = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
-    addElection({
-      variables: {
-        eventStarter: userID,
-        start: tstart,
-        end: tend,
-        expectedInterval: ((endHour - startHour) * 60 + (endMin - startMin) / 5) + 1,
-        color: color,
-        title: btoa(title),
-        content: (content === "")? (null) : (btoa(content)),
-        users: [userID],
-        hash: hashValue
-      }
+    // addElection({
+    //   variables: {
+    //     eventStarter: userID,
+    //     start: tstart,
+    //     end: tend,
+    //     expectedInterval: ((endHour - startHour) * 60 + (endMin - startMin) / 5) + 1,
+    //     color: color,
+    //     title: btoa(title),
+    //     content: (content === "")? (null) : (btoa(content)),
+    //     users: [userID],
+    //     hash: hashValue
+    //   }
+    // })
+    createElection({
+      eventStarter: userID,
+      start: tstart,
+      end: tend,
+      expectedInterval: ((endHour - startHour) * 60 + (endMin - startMin) / 5) + 1,
+      color: color,
+      title: btoa(title),
+      content: (content === "")? (null) : (btoa(content)),
+      users: [userID],
+      hash: hashValue
     })
-
-    refetch()
+    //refetch()
     setStartTime(undefined)
     setEndTime(undefined)
-    setModifySchedule(true)
+    
+    //setEvent("schedule")
     setTimeout(() => {
+      setModifySchedule(true)
       setEvent("schedule")
     }, 1500)
   }
@@ -284,7 +311,7 @@ function App() {
       let tmpDateInfo = newDateInfo.slice(i * 7, i * 7 + 7)
       newDateArrange.push(tmpDateInfo.map(dateinfo => (dateinfo.day === 0)?
       (<DateBlock date="" key={num++}></DateBlock>) : 
-      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this, dateinfo.day)}></DateBlock>)))
+      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this,dateinfo.day)}></DateBlock>)))
     }
     setDateInfo(newDateArrange)
   }, [year, month])
@@ -299,38 +326,47 @@ function App() {
     }
     if(modifySchedule) {
       let newDaySchedule = []
-      for(let i = 0; i < data.Schedules.length; i++) {
-        let tstart = new Date(parseInt(data.Schedules[i].start))
-        let tend = new Date(parseInt(data.Schedules[i].end))
+      Schedules.map((ele,index)=>{
+        let tstart = new Date(ele.start)
+        let tend = new Date(ele.end)
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
-          newDaySchedule.push(data.Schedules[i])
+          newDaySchedule.push(ele)
           for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
             let h = Math.floor(j / 60)
             let m = Math.floor((j % 60) / 5)
-            newTimePointer[h].colors[m] = data.Schedules[i].color
-            newTimePointer[h].titles[m] = data.Schedules[i].title
+            newTimePointer[h].colors[m] = ele.color
+            newTimePointer[h].titles[m] = ele.title
           }
         }
-      }
-      newDaySchedule.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
-      setDaySchedule(newDaySchedule)
-
+        newDaySchedule.sort((a, b) => { 
+          let t1 = new Date(a.start)
+          let t2 = new Date(b.start)
+          return t1.getTime() - t2.getTime() })
+        // newDaySchedule.sort((a, b) => { 
+        //   console.log(a.start.getTime()-b.start.getTime())
+        //   return a.start.getTime() - b.start.getTime() })
+        setDaySchedule(newDaySchedule)
+      })
+      
       // find day election
       let newDayElection = []
-      for(let i = 0; i < data.Elections.length; i++) {
-        let tstart = new Date(parseInt(data.Elections[i].start))
-        let tend = new Date(parseInt(data.Elections[i].end))
+      Elections.map((ele)=>{
+        let tstart = new Date(ele.start)
+        let tend = new Date(ele.end)
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
-          newDayElection.push(data.Elections[i])
-          console.log(data.Elections[i].hash)
+          newDayElection.push(ele)
         }
-      }
-      newDayElection.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
+        
+      })
+      newDayElection.sort((a, b) => { 
+          let t1 = new Date(a.start)
+          let t2 = new Date(b.start)
+          return t1.getTime() - t2.getTime() })
       setDayElection(newDayElection)
     }
     setTimePointer(newTimePointer)
     setModifySchedule(false)
-  }, [event, data])
+  }, [event, data,Schedules,Elections])
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg !== undefined && cursEnd !== undefined) {
@@ -354,7 +390,11 @@ function App() {
         const newData = subscriptionData.data.Election
         return {...prev, Elections: [...prev.Elections, newData]}
       }
-    },
+    })
+  }, [subscribeToMore, userID])
+
+  /*
+  ,
     {
       document: SCHEDULE_SUBSCRIPTION,
       variables: { user: userID },
@@ -364,9 +404,8 @@ function App() {
         return { ...prev, Schedules: [...prev.Schedules, newData]}
         
       }
-    })
-  }, [subscribeToMore, userID])
-
+    } 
+  */
   
 
   return (
