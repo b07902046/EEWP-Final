@@ -62,6 +62,7 @@ export const SCHEDULE_ELECTION_QUERY = gql`
       finalStart
       finalEnd
       users
+      hash
     }
   }
 `

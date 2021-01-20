@@ -258,6 +258,16 @@
   padding: 1vw 1vw;
 }
 
+.electionBoxList {
+  width: 40vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: auto;
+  padding: 1vw 1vw;
+}
+
 .schedulingFooter {
   width: 60vw;
   margin-top: 1vh;

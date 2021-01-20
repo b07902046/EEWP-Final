@@ -7,6 +7,7 @@ import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION } from './graphql/mu
 import { SCHEDULE_SUBSCRIPTION, ELECTION_SUBSCRIPTION } from './graphql/subscription'
 import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
+import ElectionBox from './components/ElectionBox'
 import TimeLine from './components/TimeLine'
 
 const client = new WebSocket('ws://localhost:5000')
@@ -51,6 +52,7 @@ function App() {
   const [content, setContent] = useState("")
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
+  const [dayElection, setDayElection] = useState([])
 
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(SCHEDULE_ELECTION_QUERY, {
@@ -174,6 +176,7 @@ function App() {
   }
 
   const handleSchedulingReturn = () => {
+    refetch()
     setStartTime(undefined)
     setEndTime(undefined)
     setEvent("schedule")
@@ -211,17 +214,19 @@ function App() {
     let tstart = year.toString() + " " + month.toString() + " " + day.toString() + " " + startHour.toString() + ":" + startMin.toString()
     let tend = year.toString() + " " + month.toString() + " " + day.toString() + " " + endHour.toString() + ":" + endMin.toString()
 
+    let hashValue = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
     addElection({
       variables: {
         eventStarter: userID,
         start: tstart,
         end: tend,
-        expectedInterval: 5,
+        expectedInterval: ((endHour - startHour) * 60 + (endMin - startMin) / 5) + 1,
         color: color,
-        title: title,
-        content: content,
+        title: btoa(title),
+        content: (content === "")? (null) : (btoa(content)),
         users: [userID],
-        hash: "fff"
+        hash: hashValue
       }
     })
 
@@ -285,8 +290,21 @@ function App() {
           }
         }
       }
-      newDaySchedule.sort((a, b) => {return parseInt(a.start) - parseInt(b.start)})
+      newDaySchedule.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
       setDaySchedule(newDaySchedule)
+
+      // find day election
+      let newDayElection = []
+      for(let i = 0; i < data.Elections.length; i++) {
+        let tstart = new Date(parseInt(data.Elections[i].start))
+        let tend = new Date(parseInt(data.Elections[i].end))
+        if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
+          newDayElection.push(data.Elections[i])
+          console.log(data.Elections[i].hash)
+        }
+      }
+      newDayElection.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
+      setDayElection(newDayElection)
     }
     setTimePointer(newTimePointer)
     setModifySchedule(false)
@@ -312,7 +330,6 @@ function App() {
       updateQuery: (prev, { subscriptionData }) => {
         if(!subscriptionData.data) return prev
         const newData = subscriptionData.data.Election
-        console.log(newData)
         return {...prev, Elections: [...prev.Elections, newData]}
       }
     },
@@ -407,6 +424,14 @@ function App() {
               daySchedule.map((s, index) => 
               <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
               </ScheduleBox> )
+            )}
+          </div>
+          <div className="electionBoxList">
+            {(loading)? ("loading") : (
+              dayElection.map((e, index) => 
+              <ElectionBox start={e.start} end={e.end} title={e.title} content={e.content} color={e.color} 
+              key={index} users={e.users} eventStarter={e.eventStarter} hash={e.hash}>
+              </ElectionBox> )
             )}
           </div>
         </div>
