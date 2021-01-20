@@ -68,16 +68,13 @@ const Mutation = {
         })
         return election
     },
-    JoinElection: async (parent,args,{db,pubSub},info)=>{
-        let election = await Election.findById(args.data.election_id)
-        if(election.users.find(e=> e === args.data.user_id) === undefined){
-            election.users.push(args.data.user_id)
+    JoinElection: async (parent, args, { db }, info)=>{
+        let election = await Election.findOne({hash: args.data.hash})
+
+        if(election.users.find(e => e === args.data.user) === undefined) {
+            election.users.push(args.data.user)
         }
         election.save()
-        // for sunscription
-        pubSub.publish(`Election ${election.eventStarter}`, {
-            Election: {...election}
-        })
         return election
     },
     DecideElection: async (parent,args,{db},info)=>{

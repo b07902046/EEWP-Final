@@ -3,7 +3,7 @@ import RegisterPage from './RegisterPage'
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { useQuery, useMutation} from '@apollo/react-hooks'
 import { SCHEDULE_ELECTION_QUERY } from './graphql/query'
-import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION } from './graphql/mutation'
+import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION, JOIN_ELECTION } from './graphql/mutation'
 import { SCHEDULE_SUBSCRIPTION, ELECTION_SUBSCRIPTION } from './graphql/subscription'
 import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
@@ -65,6 +65,8 @@ function App() {
   })
   const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
   const [addElection] = useMutation(CREATE_ElECTION_MUTATION)
+  const [joinElection] = useMutation(JOIN_ELECTION)
+
 
   document.addEventListener('mousedown', () => {
     setMouseStatus(true)
@@ -247,6 +249,16 @@ function App() {
     setTimeout(() => {
       setEvent("schedule")
     }, 1500)
+  }
+
+  const handleOnAccept = (u, h, e) => {
+    joinElection({
+      variables: {
+        user: u,
+        hash: h
+      }
+    })
+    setEvent("vote")
   }
 
   useEffect(() => {
@@ -497,7 +509,7 @@ function App() {
         </div>
       </div>
     ) : (event === "voteJoin")? (
-      <VoteJoin hash={hash}></VoteJoin>
+      <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept}></VoteJoin>
       ) : (
       <div> wait... </div>
     )

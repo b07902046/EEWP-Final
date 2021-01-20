@@ -85,8 +85,8 @@ input CreateElectionInput {
 }
 
 input JoinElectionInput {
-  election_id: String!
-  user_id: String!
+  hash: String!
+  user: String!
 }
 input DecideElectionInput {
   election_id: String!

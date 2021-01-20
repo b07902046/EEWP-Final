@@ -91,3 +91,19 @@ export const CREATE_ElECTION_MUTATION = gql`
         }
     }
 `
+
+export const JOIN_ELECTION = gql`
+    mutation JoinElection(
+        $hash: String!
+        $user: String!
+    ) {
+        JoinElection(data: {
+            hash: $hash
+            user: $user
+        }) {
+            users
+            hash
+            eventStarter
+        }
+    }
+`
