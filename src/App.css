@@ -408,3 +408,23 @@
 .time-info > button:hover {
   background-color: #ccc;
 }
+
+.schedule-container > img {
+  width: 15px;
+  margin-left: 27vw;
+  margin-top: -9vh;
+  visibility: hidden;
+}
+
+.schedule-container:hover > img {
+  visibility: visible;
+}
+
+.schedule-container > img:hover {
+  width: 17px;
+}
+
+.schedule-container > img:active {
+  width: 15px;
+}
+

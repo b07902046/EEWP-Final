@@ -58,7 +58,7 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
-  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection}=useSch()
+  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule}=useSch()
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
     variables: {
@@ -200,6 +200,7 @@ function App() {
 
     let msgbox = document.getElementById("login-message")
     msgbox.innerHTML = "Successfully adding schedule!!!"
+    msgbox.style.color = "green"
     msgbox.style.display = "inline"
 
     setStartTime(undefined)
@@ -213,6 +214,11 @@ function App() {
       setEvent("schedule")
     }, 1500)
 
+  }
+
+  const handleDeleteScheduleBox = (id, index) => {
+    deleteSchedule({id:id})
+    setDaySchedule(daySchedule.filter(ds => ds._id === id))
   }
 
   const handleReturn = () => {
@@ -278,6 +284,7 @@ function App() {
     //refetch()
     let msgbox = document.getElementById("login-message")
     msgbox.innerHTML = "Successfully creating election!!!"
+    msgbox.style.color = "green"
     msgbox.style.display = "inline"
 
     setStartTime(undefined)
@@ -334,17 +341,11 @@ function App() {
   }, [year, month])
 
   useEffect(() => {
-    // initialize time pointer
     let newTimePointer = []
-    if(timePointer.length === 0) {
-      for(let i = 0; i < 24; i++) {
-        let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
-        let titles = ["", "", "", "", "", "", "", "", "", "", "", ""]
-        newTimePointer.push(new TimePointer(year, month, day, i, colors, titles))
-      }
-    }
-    else {
-      newTimePointer = timePointer.map(tp => tp)
+    for(let i = 0; i < 24; i++) {
+      let colors = ["", "", "", "", "", "", "", "", "", "", "", ""]
+      let titles = ["", "", "", "", "", "", "", "", "", "", "", ""]
+      newTimePointer.push(new TimePointer(year, month, day, i, colors, titles))
     }
 
     if(modifySchedule) {
@@ -386,7 +387,7 @@ function App() {
     }
     setTimePointer(newTimePointer)
     setModifySchedule(false)
-  }, [event, data,Schedules,Elections])
+  }, [event, data, Schedules, Elections])
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg !== undefined && cursEnd !== undefined) {
@@ -487,7 +488,8 @@ function App() {
           <div className="scheduleBoxList">
             {(loading)? ("loading") : (
               daySchedule.map((s, index) => 
-              <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}>
+              <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}
+               handleDelete={handleDeleteScheduleBox.bind(this, s._id, index)}>
               </ScheduleBox> )
             )}
           </div>

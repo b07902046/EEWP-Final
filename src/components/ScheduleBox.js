@@ -34,19 +34,10 @@ let contentStyle = {
 let timeStyle = {
     width: "25vw",
     color: "gray",
-    marginTop: "-1vh"
+    marginTop: "-2vh"
 }
 
-let imgStyle = {
-    width: "1vw",
-    marginLeft: "27vw",
-    marginTop: "-9vh",
-    
-
-}
-
-
-function ScheduleBox({start: start, end: end, title: title, content: content, color: color}) {
+function ScheduleBox({start: start, end: end, title: title, content: content, color: color, handleDelete: handleDelete}) {
     const [startTime, setStartTime] = useState(new Date(start))
     const [endTime, setEndTime] = useState(new Date(end))
 
@@ -56,7 +47,7 @@ function ScheduleBox({start: start, end: end, title: title, content: content, co
                 Title: {atob(title)}
                 <div style={{...stripStyle, backgroundColor: color}}></div>
             </div>
-            <img src={XPNG} style={imgStyle}></img>
+            <img src={XPNG} alt="x" onClick={handleDelete}></img>
             <div style={timeStyle}>
                 {(startTime.getHours() < 10)? "0" + startTime.getHours() : startTime.getHours()}:
                 {(startTime.getMinutes() < 10)? "0" + startTime.getMinutes() : startTime.getMinutes()}

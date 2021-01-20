@@ -122,14 +122,11 @@ db.once('open', () => {
           // payload = id, user_id
           // return date schedule
           let schedule = await Schedule.find({_id:payload.id})
-          let base = schedule.start    // to compare date
-          let user_id = schedule.user  // to filter
-
           Schedule.deleteOne({_id:payload.id},async function(err){
             if(err){
               sendData(['fail',err.message])
             }
-            let data = await Schedule.find({user:user_id},null).exec();
+            let data = await Schedule.find();
             sendData(["deleteSchedule",data])
           })
           break

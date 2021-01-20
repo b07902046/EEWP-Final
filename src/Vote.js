@@ -69,7 +69,6 @@ function Vote({hash, userID, handleReturnVote}) {
       let newStarts = []
       let newEnds = []
       for(let i = 0; i < votes.length; i++) {
-        console.log(votes[i])
         let sh = Math.floor(votes[i][0] / 60)
         let sm = votes[i][0] % 60
         let eh = Math.floor(votes[i][1] / 60)

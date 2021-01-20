@@ -23,7 +23,6 @@ const useChat = () => {
         break
       }
       case "deleteSchedule":{
-        
         if(payload === null) setSchedules([]); 
         else if(payload === undefined) setSchedules([]); 
         else{
