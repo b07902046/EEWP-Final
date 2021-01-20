@@ -85,32 +85,111 @@ const Mutation = {
         // get all the schedules and election(decided)
         let election = await Election.findById(args.data.election_id)
         let participants = election.users
-        console.log(participants)
-        let allRelatedSchedules =[] // [schedules1, schedules2...]
-        participants.map( async (user)=>{
-            let tmp =  await Schedule.find({user:user})
-            allRelatedSchedules.concat(tmp)
-        })
+        //console.log(election.start.getTime(), election.end.getTime())
+        //console.log("participants: ",participants)
+        
+        let allRelatedSchedules = await Schedule.find({
+                user:{$in:participants}})
+
         let allRelatedElections = await Election.find({
                 users:{$in:participants},
                 finalstart : {$ne:undefined}
             })
-        console.log(allRelatedElections)
+        //console.log("all related schedules : ",allRelatedSchedules)
+        //console.log("all related elections : ",allRelatedElections)
         // start to check
-        let fs = 0
+        const TIME_LINE = 300000
         let fe = election.end.getTime()-election.start.getTime()
-        let Tstart =[]
-        let Tend = []
-        let Tuser = []
+        //console.log("slots of fe : ",fe/TIME_LINE)
+        let key = {}
+        let table = []
+        let table2= []
+        let table_se = []
+
+        let count = 0
+        for(var i = 0 ;i < election.users.length;i++){
+            key[election.users[i]] = count;
+            count++;
+            table.push([])
+            table_se.push([])
+            table2.push([])
+        }
         allRelatedSchedules.map((s)=>{
-            Tstart.push(s.start.getTime()-election.start.getTime())
-            Tend.push(s.end.getTime()-election.start.getTime())
+            //console.log(s.user,key[s.user])
+            table[key[s.user]].push((s.start.getTime()-election.start.getTime())/TIME_LINE)
+            table[key[s.user]].push((s.end.getTime()-election.start.getTime())/TIME_LINE)
+
+            table_se[key[s.user]].push(0)
+            table_se[key[s.user]].push(1)
+
+            table2[key[s.user]].push((s.start.getTime()-election.start.getTime())/TIME_LINE)
+            table2[key[s.user]].push((s.end.getTime()-election.start.getTime())/TIME_LINE)
         })
         allRelatedElections.map((e)=>{
-            Tstart.push(e.finalStart.getTime()-election.start.getTime())
-            Tend.push(e.finalEnd.getTime()-election.start.getTime())
+            e.map((u)=>{
+                table[key[u]].push((e.finalStart.getTime()-election.start.getTime())/TIME_LINE)
+                table[key[u]].push((e.finalEnd.getTime()-election.start.getTime())/TIME_LINE)
+
+                table_se.push(0)
+                table_se.push(1)
+
+                table2[key[u]].push((e.finalStart.getTime()-election.start.getTime())/TIME_LINE)
+                table2[key[u]].push((e.finalEnd.getTime()-election.start.getTime())/TIME_LINE)
+            })
         })
+        //sorting
+        for (var i=0;i<count;i++){ 
+            table[i].sort((a, b) => a - b)
+        }
         // update election.finalstart final end
+        let best_iter = 0,best_count =0
+        fe = Math.floor((fe -election.expectedInterval* 60*1000)/TIME_LINE)+1
+        let window = Math.ceil(election.expectedInterval*60*1000/TIME_LINE)
+        //console.log(fe,window)
+        for(var i= 0; i <= fe;i++){
+            let tmpcount = 0
+            for (var j=0;j<count;j++){
+                if(table[j].find(e =>((e >= i) && e <= (i+window-1))) === undefined){
+                    let maxmin = -1
+                    let minmax = -1
+                    for (var k =0;k <table[j].length;k++){
+                        if(table[j][k] >= i){break}
+                        else{maxmin = table[j][k]}
+                    }
+                    for (var k = table[j].length-1;k >=0;k--){
+                        if(table[j][k] <= (i+window-1)){break}
+                        else{minmax = table[j][k]}
+                    }
+                    if(maxmin === -1 || minmax === -1){
+                        tmpcount++;
+                        continue
+                    }
+                    let lr = table_se[j][table2[j].findIndex(e => e === maxmin)]
+                    let rl = table_se[j][table2[j].findIndex(e => e === minmax)]
+                    if(lr === 1 && rl === 0){
+                        tmpcount++
+                        continue
+                    }
+                }
+            }
+            //console.log(i,tmpcount)
+            if(tmpcount > best_count){
+                best_count = tmpcount
+                best_iter = i
+            }
+        }
+        console.log(best_count)
+        let best_start =  election.start.getTime()+best_iter*TIME_LINE
+        let best_end = best_start+(window-1)*TIME_LINE
+        let st = new Date(best_start)
+        let ed = new Date(best_end)
+        election["finalStart"]=st
+        election["finalEnd"]=ed
+        election.save()
+        //console.log(best_start)
+        //console.log(best_end)
+        console.log(st)
+        console.log(ed)
         return election
 
     }
