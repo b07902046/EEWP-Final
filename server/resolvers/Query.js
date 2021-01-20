@@ -2,6 +2,7 @@ import Schedule from '../models/schedule'
 import Election from '../models/election'
 const Message = require('../models/message')
 const Register = require('../models/register')
+const Vote = require('../models/vote')
 
 const Query = {
   Messages(parent, args, { db }, info) {
@@ -47,6 +48,10 @@ const Query = {
     return data.filter(election => {
       return election.hash === args.query
     })
+  },
+  Votes: async (parent, args, { db }, info) => {
+    let data = await Vote.find({ hash: args.query })
+    return data
   }
 }
 

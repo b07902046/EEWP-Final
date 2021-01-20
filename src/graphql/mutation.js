@@ -107,3 +107,24 @@ export const JOIN_ELECTION = gql`
         }
     }
 `
+
+export const VOTE_MUTATION = gql`
+    mutation CreateVote(
+        $user: String!
+        $hash: String!
+        $starts: [String!]!
+        $ends: [String!]!
+    ) {
+        CreateVote(data: {
+            user: $user
+            hash: $hash
+            starts: $starts
+            ends: $ends
+        }) {
+            user
+            hash
+            starts
+            ends
+        }
+    }
+`

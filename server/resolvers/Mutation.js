@@ -2,6 +2,7 @@ const Message = require('../models/message')
 const Register = require('../models/register')
 const Schedule = require('../models/schedule')
 const Election = require('../models/election')
+const Vote = require('../models/vote')
 
 const Mutation = {
     CreateMessage(parent, args, { db, pubSub }, info) {
@@ -189,6 +190,12 @@ const Mutation = {
         console.log(ed)
         return election
 
+    },
+    CreateVote(parent, args, { db, pubSub }, info) {
+        const vote = {...args.data}
+        Vote.insertMany(vote)
+
+        return vote
     }
 }
 

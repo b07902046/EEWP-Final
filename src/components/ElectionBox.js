@@ -38,7 +38,8 @@ let timeStyle = {
 
 let userStyle = {
     width: "25vw",
-    fontFamily: "Lucida Console, Courier, monospace"
+    fontFamily: "Lucida Console, Courier, monospace",
+    overflow: "scroll"
 }
 
 
@@ -59,7 +60,7 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
                 Starter: { eventStarter }
             </div>
             <div style={titleStyle}>
-                URL: {"localhost:3000/?event=" + hash}
+                <a href={"http://localhost:3000/?event=" + hash} target="_blank"> URL </a>
             </div>
             <div style={timeStyle}>
                 <header style={{fontSize: "1.2vw", color: "black"}}> Interval: </header>
@@ -76,7 +77,7 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
             </div>
             <div style={userStyle}>
                 <header style={{fontSize: "1.2vw"}}> Participants: </header>
-                {participants.map((p, index) => p)}
+                {participants.map((p, index) => <> {p} <br/></>)}
             </div>
         </div>
     )

@@ -355,3 +355,29 @@
   font-family: Lucida Console, Courier, monospace;
   margin: 1vh;
 }
+
+.voteFunctional {
+  width: 60vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.vote-button {
+  width: 10vw;
+  background-color: rgb(241, 101, 101);
+  border: 1px solid #ccc;
+  border-radius: 3vw;
+  color: white;
+  transition-duration: 0.4s;
+}
+
+.vote-button:hover {
+  background-color: white;
+  border: 1px solid rgb(241, 101, 101);
+  color: rgb(241, 101, 101);
+}
+
+.vote-button:active {
+  border: 1px dotted rgb(241, 101, 101)
+}
