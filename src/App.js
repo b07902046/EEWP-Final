@@ -11,6 +11,7 @@ import ElectionBox from './components/ElectionBox'
 import TimeLine from './components/TimeLine'
 import VoteJoin from './VoteJoin'
 import useSch from './useSch'
+import Vote from './Vote'
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -549,7 +550,9 @@ function App() {
       </div>
     ) : (event === "voteJoin")? (
       <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept}></VoteJoin>
-      ) : (
+      ) : (event === "vote")? (
+      <Vote hash={hash} userID={userID}></Vote>
+    ) : (
       <div> wait... </div>
     )
   )

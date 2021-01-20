@@ -83,10 +83,35 @@ export const ELECTIONHASH_QUERY = gql`
       finalEnd
       users
       hash
+    }
+  }
+`
+
+export const ELECTIONHASH_SCHEDULE_QUERY = gql`
+  query onESQuery(
+    $hash: String!
+    $user: String!
+  ) {
+    ElectionHashQuery(query: $hash) {
+      eventStarter
+      start
+      end
+      expectedInterval
+      color
+      title
+      content
+      finalStart
+      finalEnd
+      users
+      hash
     },
-    Registers {
-      account
-      password
+    Schedules(query: $user) {
+      user
+      start
+      end
+      color
+      title
+      content
     }
   }
 `
