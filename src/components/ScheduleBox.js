@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react'
+import XPNG from "../images/x.png"
 
 let container = {
     width: "30vw",
@@ -27,12 +28,21 @@ let stripStyle = {
 
 let contentStyle = {
     width: "25vw",
-    fontFamily: "Lucida Console, Courier, monospace"
+    fontFamily: "Lucida Console, Courier, monospace",
 }
 
 let timeStyle = {
     width: "25vw",
-    color: "gray"
+    color: "gray",
+    marginTop: "-1vh"
+}
+
+let imgStyle = {
+    width: "1vw",
+    marginLeft: "27vw",
+    marginTop: "-9vh",
+    
+
 }
 
 
@@ -41,11 +51,12 @@ function ScheduleBox({start: start, end: end, title: title, content: content, co
     const [endTime, setEndTime] = useState(new Date(end))
 
     return (
-        <div style={container}>
+        <div style={container} className="schedule-container">
             <div style={titleStyle}>
                 Title: {atob(title)}
                 <div style={{...stripStyle, backgroundColor: color}}></div>
             </div>
+            <img src={XPNG} style={imgStyle}></img>
             <div style={timeStyle}>
                 {(startTime.getHours() < 10)? "0" + startTime.getHours() : startTime.getHours()}:
                 {(startTime.getMinutes() < 10)? "0" + startTime.getMinutes() : startTime.getMinutes()}

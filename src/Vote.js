@@ -43,8 +43,10 @@ function Vote({hash, userID, handleReturnVote}) {
         e.target.style.backgroundColor = "#008000"
         if(cursBeg === undefined) {
           setCursBeg(minute)
+          setCursEnd(minute)
         }
-        setCursEnd(minute)
+        if(minute < cursBeg) setCursBeg(minute)
+        if(minute > cursEnd) setCursEnd(minute)
       }
       let timeInfo = e.target.firstChild
       let titleInfo = e.target.children[1]
@@ -67,6 +69,7 @@ function Vote({hash, userID, handleReturnVote}) {
       let newStarts = []
       let newEnds = []
       for(let i = 0; i < votes.length; i++) {
+        console.log(votes[i])
         let sh = Math.floor(votes[i][0] / 60)
         let sm = votes[i][0] % 60
         let eh = Math.floor(votes[i][1] / 60)
