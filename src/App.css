@@ -174,7 +174,7 @@
 .schedularFormFunctional > button:hover {
   background-color: white;
   color: rgb(241, 101, 101);;
-  border: 1px solid rgb(241, 101, 101);;
+  border: 1px solid rgb(241, 101, 101);
 }
 
 .schedularFormFunctional > button:active {
@@ -291,4 +291,67 @@
   background-color: #eee;
   border: 1px solid steelblue;
   color: steelblue;
+}
+
+.choiceBlock {
+  width: 80vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.choiceBlock > button {
+  width: 20vw;
+  height: 10vh;
+  border: 1px solid #ccc;
+  border-radius: 2vw;
+  font-size: 1.5vw;
+  color: white;
+  margin-top: 5vh;
+  transition-duration: 0.4s;
+}
+
+.choiceBlock > #reject {
+  background-color: rgb(241, 101, 101);
+}
+
+.choiceBlock > #accept {
+  background-color: rgb(60, 179, 113);
+}
+
+.choiceBlock > #reject:hover {
+  background-color: white;
+  border: 1px solid rgb(241, 101, 101);
+  color: rgb(241, 101, 101);
+}
+
+.choiceBlock > #reject:active {
+  border: 1px dotted rgb(241, 101, 101);
+}
+
+.choiceBlock > #accept:hover {
+  background-color: white;
+  border: 1px solid rgb(60, 179, 113);
+  color: rgb(60, 179, 113);
+}
+
+.choiceBlock > #accept:active {
+  border: 1px dotted rgb(60, 179, 113)
+}
+
+.electionInfoBlock {
+  width: 80vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2vw 2vw
+}
+
+.electionInfoItem {
+  width: 60vw;
+  font-size: 1.5vw;
+  font-family: Lucida Console, Courier, monospace;
+  margin: 1vh;
 }

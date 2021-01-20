@@ -9,6 +9,7 @@ import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
 import ElectionBox from './components/ElectionBox'
 import TimeLine from './components/TimeLine'
+import VoteJoin from './VoteJoin'
 
 const client = new WebSocket('ws://localhost:5000')
 
@@ -81,7 +82,14 @@ function App() {
       }
       else {
         setUserID(payload)
-        setEvent("Calendar")
+        let url = window.location.search
+        let urlParam = new URLSearchParams(url)
+        if(urlParam.has("event")) {
+          setEvent("voteJoin")
+        }
+        else {
+          setEvent("Calendar")
+        }
       }
     }
   }
@@ -486,7 +494,9 @@ function App() {
           <button type="submit" onClick={handleSchedulingReturn}> Back </button>
         </div>
       </div>
-    ) : (
+    ) : (event === "voteJoin")? (
+      <VoteJoin></VoteJoin>
+      ) : (
       <div> wait... </div>
     )
   )
