@@ -41,6 +41,12 @@ const Query = {
       return data.filter(election => 
         (election.users.find(user=> user === args.query) !== undefined))
     }
+  },
+  ElectionHashQuery: async (parent, args, { db }, info) => {
+    let data = await Election.find()
+    return data.filter(election => {
+      return election.hash === args.query
+    })
   }
 }
 

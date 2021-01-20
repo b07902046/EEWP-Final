@@ -37,6 +37,7 @@ type Query {
   Registers(query: String): [Register!]!
   Schedules(query: String): [Schedule!]!
   Elections(query: String): [Election!]!
+  ElectionHashQuery(query: String!): [Election!]!
 }
 
 type Mutation {

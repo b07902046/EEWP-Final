@@ -42,6 +42,7 @@ function App() {
   const [timePointer, setTimePointer] = useState([])
 
   const [mouseStatus, setMouseStatus] = useState(false)
+  const [hash, setHash] = useState("")
   // cursor begin/end
   const [cursBeg, setCursBeg] = useState(undefined)
   const [cursEnd, setCursEnd] = useState(undefined)
@@ -81,10 +82,11 @@ function App() {
         setPassword("")
       }
       else {
-        setUserID(payload)
+        setUserID(account)
         let url = window.location.search
         let urlParam = new URLSearchParams(url)
         if(urlParam.has("event")) {
+          setHash(urlParam.get("event"))
           setEvent("voteJoin")
         }
         else {
@@ -495,7 +497,7 @@ function App() {
         </div>
       </div>
     ) : (event === "voteJoin")? (
-      <VoteJoin></VoteJoin>
+      <VoteJoin hash={hash}></VoteJoin>
       ) : (
       <div> wait... </div>
     )

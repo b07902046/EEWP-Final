@@ -66,3 +66,27 @@ export const SCHEDULE_ELECTION_QUERY = gql`
     }
   }
 `
+
+export const ELECTIONHASH_QUERY = gql`
+  query ElectionHashQuery(
+    $hash: String!
+  ) {
+    ElectionHashQuery(query: $hash) {
+      eventStarter
+      start
+      end
+      expectedInterval
+      color
+      title
+      content
+      finalStart
+      finalEnd
+      users
+      hash
+    },
+    Registers {
+      account
+      password
+    }
+  }
+`
