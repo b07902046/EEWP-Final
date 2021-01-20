@@ -141,7 +141,12 @@ db.once('open', () => {
             if(err){
               sendData(["fail",err.message])
             }
-            sendData(["createElection",newElection])
+            // let data = await Election.find({
+            //   users: $in [payload.eventStarter]
+            // })
+            let data = await Election.find()
+            let datelist = data.filter(e=>(e.users.find(u => u === payload.eventStarter)!== undefined))
+            sendData(["createElection", datelist])
           })
           break
         }

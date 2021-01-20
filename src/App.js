@@ -354,6 +354,7 @@ function App() {
       
       // find day election
       let newDayElection = []
+      console.log(Elections)
       Elections.map((ele)=>{
         let tstart = new Date(ele.start)
         let tend = new Date(ele.end)
@@ -396,20 +397,6 @@ function App() {
       }
     })
   }, [subscribeToMore, userID])
-
-  /*
-  ,
-    {
-      document: SCHEDULE_SUBSCRIPTION,
-      variables: { user: userID },
-      updateQuery: (prev, { subscriptionData }) => {
-        if(!subscriptionData.data) return prev
-        const newData = subscriptionData.data.Schedule
-        return { ...prev, Schedules: [...prev.Schedules, newData]}
-        
-      }
-    } 
-  */
   
 
   return (
