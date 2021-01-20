@@ -99,7 +99,7 @@ input JoinElectionInput {
 }
 
 input DecideElectionInput {
-  election_id: String!
+  hash: String!
 }
 
 input CreateVoteInput {

@@ -78,118 +78,105 @@ const Mutation = {
         election.save()
         return election
     },
-    DecideElection: async (parent,args,{db},info)=>{
-        // goal to decide the finalStart and finalEnd
-        // get all the schedules and election(decided)
-        let election = await Election.findById(args.data.election_id)
-        let participants = election.users
-        //console.log(election.start.getTime(), election.end.getTime())
-        //console.log("participants: ",participants)
-        
-        let allRelatedSchedules = await Schedule.find({
-                user:{$in:participants}})
-
-        let allRelatedElections = await Election.find({
-                users:{$in:participants},
-                finalstart : {$ne:undefined}
-            })
-        //console.log("all related schedules : ",allRelatedSchedules)
-        //console.log("all related elections : ",allRelatedElections)
-        // start to check
-        const TIME_LINE = 300000
-        let fe = election.end.getTime()-election.start.getTime()
-        //console.log("slots of fe : ",fe/TIME_LINE)
-        let key = {}
-        let table = []
-        let table2= []
-        let table_se = []
-
-        let count = 0
-        for(var i = 0 ;i < election.users.length;i++){
-            key[election.users[i]] = count;
-            count++;
-            table.push([])
-            table_se.push([])
-            table2.push([])
+    DecideElection: async (parent, args, { db, pubSub }, info)=>{
+        const TIME_SPACE = 300000
+        let election = await Election.find({hash:args.data.hash})
+        let participants = election[0].users
+        let timeslot = [] // n*x
+        let key = {} //user name -> index
+        let ts = new Date(election[0].start)
+        let te = new Date(election[0].end)
+        let feasible = (te.getTime()-ts.getTime())/TIME_SPACE
+        let final = []
+        for(var i = 0;i < feasible+1;i++){
+            timeslot.push([])
         }
-        allRelatedSchedules.map((s)=>{
-            //console.log(s.user,key[s.user])
-            table[key[s.user]].push((s.start.getTime()-election.start.getTime())/TIME_LINE)
-            table[key[s.user]].push((s.end.getTime()-election.start.getTime())/TIME_LINE)
-
-            table_se[key[s.user]].push(0)
-            table_se[key[s.user]].push(1)
-
-            table2[key[s.user]].push((s.start.getTime()-election.start.getTime())/TIME_LINE)
-            table2[key[s.user]].push((s.end.getTime()-election.start.getTime())/TIME_LINE)
-        })
-        allRelatedElections.map((e)=>{
-            e.map((u)=>{
-                table[key[u]].push((e.finalStart.getTime()-election.start.getTime())/TIME_LINE)
-                table[key[u]].push((e.finalEnd.getTime()-election.start.getTime())/TIME_LINE)
-
-                table_se.push(0)
-                table_se.push(1)
-
-                table2[key[u]].push((e.finalStart.getTime()-election.start.getTime())/TIME_LINE)
-                table2[key[u]].push((e.finalEnd.getTime()-election.start.getTime())/TIME_LINE)
+        for(var i = 0 ;i < election[0].users.length;i++){
+            key[election[0].users[i]] = i;
+            let vote = await Vote.find({
+                user: election[0].users[i],
+                hash: election[0].hash
             })
-        })
-        //sorting
-        for (var i=0;i<count;i++){ 
-            table[i].sort((a, b) => a - b)
-        }
-        // update election.finalstart final end
-        let best_iter = 0,best_count =0
-        fe = Math.floor((fe -election.expectedInterval* 60*1000)/TIME_LINE)+1
-        let window = Math.ceil(election.expectedInterval*60*1000/TIME_LINE)
-        //console.log(fe,window)
-        for(var i= 0; i <= fe;i++){
-            let tmpcount = 0
-            for (var j=0;j<count;j++){
-                if(table[j].find(e =>((e >= i) && e <= (i+window-1))) === undefined){
-                    let maxmin = -1
-                    let minmax = -1
-                    for (var k =0;k <table[j].length;k++){
-                        if(table[j][k] >= i){break}
-                        else{maxmin = table[j][k]}
+            let st = []
+            let ed = []
+            for(var k = 0; k < vote[0].starts.length;k++){
+                st.push(vote[0].starts[k])
+                ed.push(vote[0].ends[k])
+            }
+            st.sort((a,b)=>{
+                let t1 = new Date(a)
+                let t2 = new Date(b)
+                return t1.getTime()- t2.getTime()})
+            ed.sort((a,b)=>{
+                let t1 = new Date(a)
+                let t2 = new Date(b)
+                return t1.getTime()- t2.getTime()})
+            
+            for(var k =0;k < st.length;k++){
+                let t1 = new Date(st[k])
+                let t2 = new Date(ed[k])
+                st[k] = (t1.getTime()-ts.getTime())/TIME_SPACE
+                ed[k] = (t2.getTime()-ts.getTime())/TIME_SPACE
+            }
+            
+            let iter = 0
+            for(var j = 0;j < feasible+1;j++){
+                let ok = 0
+                if(iter < st.length){
+                    while(j > ed[iter]){
+                    iter++
                     }
-                    for (var k = table[j].length-1;k >=0;k--){
-                        if(table[j][k] <= (i+window-1)){break}
-                        else{minmax = table[j][k]}
-                    }
-                    if(maxmin === -1 || minmax === -1){
-                        tmpcount++;
-                        continue
-                    }
-                    let lr = table_se[j][table2[j].findIndex(e => e === maxmin)]
-                    let rl = table_se[j][table2[j].findIndex(e => e === minmax)]
-                    if(lr === 1 && rl === 0){
-                        tmpcount++
-                        continue
+                    if(j >= st[iter]){
+                        ok = 1
                     }
                 }
-            }
-            //console.log(i,tmpcount)
-            if(tmpcount > best_count){
-                best_count = tmpcount
-                best_iter = i
+                timeslot[j].push(ok)
             }
         }
-        console.log(best_count)
-        let best_start =  election.start.getTime()+best_iter*TIME_LINE
-        let best_end = best_start+(window-1)*TIME_LINE
-        let st = new Date(best_start)
-        let ed = new Date(best_end)
-        election["finalStart"]=st
-        election["finalEnd"]=ed
-        election.save()
-        //console.log(best_start)
-        //console.log(best_end)
-        console.log(st)
-        console.log(ed)
-        return election
-
+        //console.log(timeslot)
+        for(var i = 0;i < feasible+1;i++){
+            final.push(timeslot[i].reduce((a,b)=>(a+b)))
+        }
+        //console.log(final)
+        let max_people = -1
+        let max_length = 0
+        let count_length = 0
+        let count_st = 0
+        let max_st = 0
+        for(var i = 0;i < feasible+1;i++){
+            if(final[i] > max_people){
+                max_people = final[i]
+                max_length = 0
+                count_length= 0
+                count_st = i
+                max_st = i
+            }
+            else if(final[i] === max_people) {
+                if(final[i-1] < final[i])
+                {
+                    count_length= 0
+                    count_st = i
+                }
+                count_length++
+            }
+            else{
+                if(count_length > max_length){
+                    max_st = count_st
+                    max_length = count_length
+                }
+                count_length  = 0
+            }
+        } 
+        //console.log(max_st,max_length)
+        let best_st = ts.getTime()+max_st*TIME_SPACE
+        let best_ed = best_st + (max_length-1)*TIME_SPACE
+        let st_time = new Date(best_st)
+        let ed_time = new Date(best_ed)
+        console.log(st_time,ed_time)
+        election[0]["finalStart"] = st_time
+        election[0]["finalEnd"] = ed_time
+        election[0].save()
+        return election[0]
     },
     CreateVote(parent, args, { db, pubSub }, info) {
         const vote = {...args.data}
