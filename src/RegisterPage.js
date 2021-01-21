@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 
-const client = new WebSocket('ws://localhost:46232')
+const client = new WebSocket('ws://140.112.30.33:46232')
 
 function RegisterPage({handleClickBack}) {
   const [account, setAccount] = useState('')
