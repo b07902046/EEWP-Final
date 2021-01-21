@@ -1,61 +1,59 @@
 import './App.css';
-import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import { ELECTIONHASH_QUERY } from './graphql/query'
-import { DECIDE_ELECTION } from './graphql/mutation';
+import React, { useEffect, useState } from 'react'
 
-const redColor = "rgb(241, 101, 101)"
-const greenColor = "rgb(60, 179, 113)"
-
-function VoteJoin({hash, userID, handleOnAccept}) {
-  const { loading, error, data } = useQuery(ELECTIONHASH_QUERY, {
-    variables: { hash: hash }
-  })
-  const [decideElection] = useMutation(DECIDE_ELECTION)
+function VoteJoin({hash, userID, handleOnAccept, client}) {
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState(new Date())
   const [title, setTitle] = useState("")
   const [starter, setStarter] = useState("")
   const [content, setContent] = useState("")
   const [users, setUsers] = useState([])
-  const [idTable, setIdTable] = useState({})
   const [finalStart, setFinalStart] = useState(null)
   const [finalEnd, setFinalEnd] = useState(null)
+
+  client.onmessage = (message) => {
+    const [task, payload] = JSON.parse(message.data)
+    switch(task) {
+      case "queryElectionHashRes": {
+        if(payload === "Fail") {
+          alert("Hash not found")
+          window.location = "http://localhost:3000/"
+        }
+        else {
+          setStartTime(new Date(payload.start))
+          setEndTime(new Date(payload.end))
+          setTitle(atob(payload.title))
+          setStarter(payload.eventStarter)
+          setContent(atob(payload.content))
+          setUsers(payload.users)
+          if(payload.finalStart !== undefined) setFinalStart(payload.finalStart)
+          if(payload.finalEnd !== undefined) setFinalEnd(payload.finalEnd)
+        }
+        break
+      }
+      default: {
+        break
+      }
+    }
+    
+  }
 
   const handleReject = () => {
     window.location = "http://localhost:3000/"
   }
 
   const handleDecide = () => {
-    decideElection({
-      variables: {
-        hash: hash
-      }
-    })
+    
+    // TODO
     let url = window.location.href
     window.location = url
   }
 
   useEffect(() => {
-    if(data) {
-      if(data.ElectionHashQuery.length === 0) {
-        alert("hash not found...")
-        window.location = "http://localhost:3000/"
-      }
-      else {
-          let newData = data.ElectionHashQuery[0]
-          setTitle(atob(newData.title))
-          setStarter(newData.eventStarter)
-          setStartTime(new Date(parseInt(newData.start)))
-          setEndTime(new Date(parseInt(newData.end)))
-          setContent((newData.content)? atob(newData.content) : "")
-          setUsers(newData.users)
-
-          if(newData.finalStart !== null) setFinalStart(parseInt(newData.finalStart))
-          if(newData.finalEnd !== null) setFinalEnd(parseInt(newData.finalEnd))
-      }
+    if(title === "") {
+      client.send(JSON.stringify(["queryElectionHash", { hash: hash }]))
     }
-  }, [data, hash])
+  }, [title])
 
   return (
     <div className="container">
@@ -63,7 +61,7 @@ function VoteJoin({hash, userID, handleOnAccept}) {
       <h1> Election </h1>
       <div className="electionInfoBlock">
           <div className="electionInfoItem">
-              Title: {(loading)? "loading..." : title}
+              Title: {title}
           </div>
           <div className="electionInfoItem">
             Starter: {starter}
