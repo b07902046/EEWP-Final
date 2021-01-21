@@ -15,7 +15,7 @@
   display: none;
   position: fixed;
   margin-top: 10vh;
-  margin-left: -23vw;
+  margin-left: -30vw;
   color: red;
   font-family: Lucida Console, Courier, monospace;
   font-size: 1.2vw;
@@ -441,4 +441,3 @@
 .schedule-container > img:active {
   width: 15px;
 }
-

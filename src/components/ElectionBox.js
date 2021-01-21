@@ -40,7 +40,6 @@ let timeStyle = {
 let userStyle = {
     width: "25vw",
     fontFamily: "Lucida Console, Courier, monospace",
-    overflow: "scroll"
 }
 
 

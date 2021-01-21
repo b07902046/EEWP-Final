@@ -359,7 +359,7 @@ function App() {
           for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
             let h = Math.floor(j / 60)
             let m = Math.floor((j % 60) / 5)
-            newTimePointer[h].colors[m] = ele.color
+            newTimePointer[h].colors[m] = ele.color + "80"
             newTimePointer[h].titles[m] = ele.title
           }
         }
@@ -471,7 +471,6 @@ function App() {
           </div>
           {dateInfo.map(dateinfo => <div className="week-bar" key={dateinfo[0].key}> {dateinfo} </div>)}
         </div>
-
       </div>
     ) : (event === "schedule")? (
       <div className="container">
