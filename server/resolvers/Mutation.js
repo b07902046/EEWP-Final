@@ -176,7 +176,6 @@ const Mutation = {
         election[0]["finalStart"] = st_time
         election[0]["finalEnd"] = ed_time
         election[0].save()
-        console.log(election[0])
 
         pubSub.publish(`ElectionDecide ${args.data.hash}`, {
             Election: {

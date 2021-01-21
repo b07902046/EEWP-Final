@@ -63,9 +63,13 @@ function Vote({hash, userID, handleReturnVote}) {
 
     const handleAddVote = (e) => {
       votes.push([cursBeg, cursEnd])
-      console.log(votes)
       if(cursBeg === undefined || cursEnd === undefined) {
-        alert("please vote")
+        let msg = document.getElementById("login-message")
+        msg.innerHTML = "please select intervals"
+        msg.style.display = "inline"
+        setTimeout(() => {
+          msg.style.display = "none"
+        }, 2000)
         return
       }
       let newStarts = []
@@ -100,26 +104,35 @@ function Vote({hash, userID, handleReturnVote}) {
       setVotes([])
       setCursBeg(undefined)
       setCursEnd(undefined)
-      alert("add successfully")
+      let msg = document.getElementById("login-message")
+      msg.innerHTML = "Vote successfully!!"
+      msg.style.color = "green"
+      msg.style.display = "inline"
+      setTimeout(() => {
+        msg.style.display = "none"
+      }, 2000)
+
     }
 
     const handleCancel = () => {
+      if(cursBeg === undefined || cursEnd === undefined) {
+        return
+      }
       let sh = startTime.getHours()
-      for(let i = 0; i < votes.length; i++) {
-        for(let j = votes[i][0]; j <= votes[i][1]; j+=5) {
-          let h = Math.floor(j / 60)
-          let m = Math.floor((j % 60) / 5)
-          let eid = "timeline" + (h * 60).toString() + m.toString()
-          document.getElementById(eid).style.backgroundColor = voteInfo[h - sh].colors[m]
-        }
+      for(let i = cursBeg; i <= cursEnd; i++) {
+        let h = Math.floor(i / 60)
+        let m = Math.floor((i % 60) / 5)
+        let eid = "timeline" + (h * 60).toString() + m.toString()
+        document.getElementById(eid).style.backgroundColor = voteInfo[h - sh].colors[m]
       }
       setVotes([])
+      setCursBeg(undefined)
+      setCursEnd(undefined)
     }
 
     useEffect(() => {
       if(data) {
         if(data.ElectionHashQuery.length === 0) {
-          alert("hash not found...")
           window.location = "http://localhost:3000/"
         }
         else {
@@ -187,6 +200,7 @@ function Vote({hash, userID, handleReturnVote}) {
     return (
     <div className="container">
       <header> ChoChoMeet </header>
+      <div className="message-box" id="login-message"></div>
       <h1> {year}. {month}. {day}. </h1>
       <h3>
         {(startTime.getHours() < 10)? ("0" + startTime.getHours()) : startTime.getHours()}:
