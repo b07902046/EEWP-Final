@@ -59,7 +59,7 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
                 Starter: { eventStarter }
             </div>
             <div style={titleStyle}>
-                <a href={"http://140.112.30.33:59321/?event=" + hash} target="_blank"> URL </a>
+                <a href={"http://140.112.30.33:6321/?event=" + hash} target="_blank"> URL </a>
             </div>
             <div style={timeStyle}>
                 <header style={{fontSize: "1.2vw", color: "black"}}> Interval: </header>

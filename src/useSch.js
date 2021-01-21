@@ -2,7 +2,7 @@ import { useState } from 'react'
 // import { w3cwebsocket as W3CWebSocket } from 'websocket'
 
 // const client = new W3CWebSocket('ws://localhost:4000')
-const client = new WebSocket('ws://140.112.30.33:46232')
+const client = new WebSocket('ws://140.112.30.33:6232')
 
 const useChat = () => {
   const [Schedules, setSchedules] = useState([])

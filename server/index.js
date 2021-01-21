@@ -238,7 +238,7 @@ db.once('open', () => {
             else if(final[i] === max_people) {
                 if(final[i-1] < final[i])
                 {
-                    count_length= 0
+                    count_leangth= 0
                     count_st = i
                 }
                 count_length++
@@ -285,7 +285,7 @@ db.once('open', () => {
   })
 })
 
-const PORT = process.env.port || 46232
+const PORT = process.env.port || 6232
 
 server.listen(PORT, () => {
   console.log(`Express listen on http://localhost:${PORT}`)
