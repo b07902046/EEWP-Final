@@ -9,7 +9,7 @@ import VoteJoin from './VoteJoin'
 import useSch from './useSch'
 import Vote from './Vote'
 
-const client = new WebSocket('ws://localhost:5000')
+const client = new WebSocket('ws://localhost:46232')
 
 function DateBlockInfo(day, onclick,schedules) {
   this.day = day
