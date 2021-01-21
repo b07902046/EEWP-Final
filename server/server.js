@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt'
+
+const bcrypt = require('bcrypt')
 
 // express and websocket
 const http = require('http')
