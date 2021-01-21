@@ -2,9 +2,9 @@
 
 ### Group : 62
 
-### Deployed at :
+### Deployed at :   http://140.112.30.33:59321
 
-### Demo :
+### Demo : https://youtu.be/lb6rl4A_TOg
 
 ### 服務內容：
 
