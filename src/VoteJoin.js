@@ -31,6 +31,11 @@ function VoteJoin({hash, userID, handleOnAccept, client}) {
         }
         break
       }
+      case "decideElection": {
+        console.log(payload)
+        setFinalStart(payload.finalStart)
+        setFinalEnd(payload.finalEnd)
+      }
       default: {
         break
       }
@@ -43,8 +48,7 @@ function VoteJoin({hash, userID, handleOnAccept, client}) {
   }
 
   const handleDecide = () => {
-    
-    // TODO
+    client.send(JSON.stringify(["decideElection", { hash: hash }]))
     let url = window.location.href
     window.location = url
   }
