@@ -1,10 +1,17 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga'
-import Query from './resolvers/Query'
-import Mutation from './resolvers/Mutation'
-import Subscription from './resolvers/Subscription'
-import bcrypt from 'bcrypt'
-import { IntrospectionFragmentMatcher } from 'apollo-boost'
-import { start } from 'repl'
+// import { GraphQLServer, PubSub } from 'graphql-yoga'
+// import Query from './resolvers/Query'
+// import Mutation from './resolvers/Mutation'
+// import Subscription from './resolvers/Subscription'
+// import bcrypt from 'bcrypt'
+// import { IntrospectionFragmentMatcher } from 'apollo-boost'
+// import { start } from 'repl'
+
+const { GraphQLServer, PubSub } = require('graphql-yoga')
+const Query = require('./resolvers/Query')
+const Mutation = require('./resolvers/Mutation')
+const Subscription = require('./resolvers/Subscription')
+
+const bcrypt = require('bcrypt')
 
 // express and websocket
 const http = require('http')
@@ -285,7 +292,7 @@ server.listen(PORT, () => {
 const pubSub = new PubSub()
 
 const graphqlServer = new GraphQLServer({
-  typeDefs: './server/src/schema.graphql',
+  typeDefs: './src/schema.graphql',
   resolvers: {
     Query,
     Mutation,

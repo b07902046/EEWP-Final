@@ -1,5 +1,5 @@
-import Schedule from '../models/schedule'
-import Election from '../models/election'
+const Schedule = require('../models/schedule')
+const Election = require('../models/election')
 const Message = require('../models/message')
 const Register = require('../models/register')
 const Vote = require('../models/vote')
@@ -55,4 +55,4 @@ const Query = {
   }
 }
 
-export { Query as default }
+// export { Query as default }
