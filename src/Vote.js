@@ -38,7 +38,7 @@ function Vote({hash, userID, handleReturnVote, client}) {
         case "queryElectionHashRes": {
           if(payload === "Fail") {
             alert("Hash not found")
-            window.location = "http://localhost:59321/"
+            window.location = "http://140.112.30.33:59321/"
           }
           else {
             setStartTime(new Date(payload.start))
