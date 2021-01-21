@@ -15,9 +15,10 @@ import Vote from './Vote'
 
 const client = new WebSocket('ws://localhost:5000')
 
-function DateBlockInfo(day, onclick) {
+function DateBlockInfo(day, onclick,schedules) {
   this.day = day
   this.onclick = onclick
+  this.schedules = schedules
 }
 
 function TimePointer(year, month, day, hour, colors, titles) {
@@ -58,7 +59,7 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
-  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule,decideElection,joinElection}=useSch()
+  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule,decideElection}=useSch()
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
     variables: {
@@ -320,26 +321,43 @@ function App() {
     
     // add spare blocks in front
     for(let i = 0; i < weekday; i++) {
-      newDateInfo.push(new DateBlockInfo(0, null))
+      newDateInfo.push(new DateBlockInfo(0, null,undefined))
     }
     
     for(let i = 1; i <= numDay; i++) {
-      newDateInfo.push(new DateBlockInfo(i, null))
+      let data = []
+      Schedules.map((ele)=>{
+        let tstart = new Date(ele.start)
+        if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && i === tstart.getDate()){
+          data.push(ele)
+        }
+      })
+      if(data.length == 0){
+        data = undefined
+      }
+      else{
+        data.sort((a,b)=>{
+        let t1 = new Date(a.start)
+        let t2 = new Date(b.start)
+        return t1.getTime() - t2.getTime() 
+      })
+      }
+      newDateInfo.push(new DateBlockInfo(i, null,data))
     }
     // add spare blocks at back
     while(newDateInfo.length % 7 !== 0) {
-      newDateInfo.push(new DateBlockInfo(0, null))
+      newDateInfo.push(new DateBlockInfo(0, null,undefined))
     }
     let newDateArrange = []
     let num = 0
     for(let i = 0; i < Math.ceil(newDateInfo.length / 7); i++) {
       let tmpDateInfo = newDateInfo.slice(i * 7, i * 7 + 7)
       newDateArrange.push(tmpDateInfo.map(dateinfo => (dateinfo.day === 0)?
-      (<DateBlock date="" key={num++}></DateBlock>) : 
-      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this,dateinfo.day)}></DateBlock>)))
+      (<DateBlock date="" key={num++} data={undefined}></DateBlock>) : 
+      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this,dateinfo.day)} data={dateinfo.schedules}></DateBlock>)))
     }
     setDateInfo(newDateArrange)
-  }, [year, month])
+  }, [year, month,Schedules])
 
   useEffect(() => {
     let newTimePointer = []
