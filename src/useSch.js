@@ -58,6 +58,22 @@ const useChat = () => {
         }
         break
       }
+      case "joinElection":{
+        if(payload === null) setElections([]); 
+        else if(payload === undefined) setElections([]); 
+        else{
+          setElections(payload)
+        }
+        break
+      }
+      case "decideElection":{
+        if(payload === null) setElections([]); 
+        else if(payload === undefined) setElections([]); 
+        else{
+          setElections(payload)
+        }
+        break
+      }
       default:
         break
     }
@@ -96,7 +112,24 @@ const useChat = () => {
     let req_msg = ["queryElection",payload]
     sendData(req_msg)
   }
-
+  const decideElection = (payload)=>{
+    // paload = {
+    //  hash:    hash} 
+    let req_msg = ["decideElection",payload]
+    sendData(req_msg)
+  }
+  const joinElection = (payload)=>{
+    // paload = {
+    //  hash:    hash} 
+    let req_msg = ["joinElection",payload]
+    sendData(req_msg)
+  }
+  const createVote = (payload)=>{
+    // paload = {
+    //  hash:    hash} 
+    let req_msg = ["createVote",payload]
+    sendData(req_msg)
+  }
   return {
     createSchedule,
     deleteSchedule,
@@ -106,7 +139,10 @@ const useChat = () => {
     Elections,
     Schedules,
     setSchedules,
-    setElections
+    setElections,
+    joinElection,
+    decideElection,
+    createVote
   }
 }
 

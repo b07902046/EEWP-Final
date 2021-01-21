@@ -58,7 +58,7 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
-  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule}=useSch()
+  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule,decideElection,joinElection}=useSch()
   // graphql
   const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
     variables: {
