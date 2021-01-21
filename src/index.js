@@ -13,12 +13,12 @@ import { getMainDefinition } from 'apollo-utilities'
 
 // Create an http link:
 const httpLink = new HttpLink({
-  uri: 'http://localhost:46232/'
+  uri: 'http://140.112.30.33:46232/'
 })
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:46232/`,
+  uri: `ws://140.112.30.33:46232/`,
   options: { reconnect: true }
 })
 
