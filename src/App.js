@@ -217,6 +217,7 @@ function App() {
 
   const handleDeleteScheduleBox = (id, index) => {
     deleteSchedule({id:id})
+    setDaySchedule(daySchedule.filter(s => s._id !== id))
   }
 
   const handleReturn = () => {
@@ -287,6 +288,8 @@ function App() {
 
     setStartTime(undefined)
     setEndTime(undefined)
+    setCursBeg(undefined)
+    setCursEnd(undefined)
     
     //setEvent("schedule")
     setTimeout(() => {

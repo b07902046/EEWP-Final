@@ -113,4 +113,5 @@ type Subscription {
   Message(username: String): Message!
   Schedule(user: String!): Schedule!
   Election(user: String!): Election!
+  ElectionDecide(hash: String!): Election!
 }

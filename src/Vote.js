@@ -62,8 +62,10 @@ function Vote({hash, userID, handleReturnVote}) {
     }
 
     const handleAddVote = (e) => {
-      if(votes.length === 0) {
-        alert("Please vote")
+      votes.push([cursBeg, cursEnd])
+      console.log(votes)
+      if(cursBeg === undefined || cursEnd === undefined) {
+        alert("please vote")
         return
       }
       let newStarts = []
@@ -79,6 +81,13 @@ function Vote({hash, userID, handleReturnVote}) {
 
         newStarts.push(ss)
         newEnds.push(es)
+
+        for(let j = votes[i][0]; j <= votes[i][1]; j+=5) {
+          let h = Math.floor(j / 60)
+          let m = Math.floor((j % 60) / 5)
+          let eid = "timeline" + (h * 60).toString() + m.toString()
+          document.getElementById(eid).style.backgroundColor = "green"
+        }
       }
       addVote({
         variables: {
@@ -89,6 +98,8 @@ function Vote({hash, userID, handleReturnVote}) {
         }
       })
       setVotes([])
+      setCursBeg(undefined)
+      setCursEnd(undefined)
       alert("add successfully")
     }
 
@@ -102,17 +113,8 @@ function Vote({hash, userID, handleReturnVote}) {
           document.getElementById(eid).style.backgroundColor = voteInfo[h - sh].colors[m]
         }
       }
+      setVotes([])
     }
-
-    useEffect(() => {
-      if(mouseStatus === false && cursBeg !== undefined && cursEnd !== undefined) {
-        let beg = cursBeg
-        let end = cursEnd
-        setVotes([...votes, [beg, end]])
-        setCursBeg(undefined)
-        setCursEnd(undefined)
-      }
-    }, [mouseStatus, cursBeg, cursEnd])
 
     useEffect(() => {
       if(data) {

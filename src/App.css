@@ -335,6 +335,10 @@
   background-color: rgb(60, 179, 113);
 }
 
+.choiceBlock > #decide {
+  background-color: steelblue;
+}
+
 .choiceBlock > #reject:hover {
   background-color: white;
   border: 1px solid rgb(241, 101, 101);
@@ -353,6 +357,16 @@
 
 .choiceBlock > #accept:active {
   border: 1px dotted rgb(60, 179, 113)
+}
+
+.choiceBlock > #decide:hover {
+  background-color: white;
+  border: 1px solid steelblue;
+  color: steelblue
+}
+
+.choiceBlock >#decide:active {
+  border: 1px dotted steelblue;
 }
 
 .electionInfoBlock {

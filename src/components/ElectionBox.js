@@ -46,8 +46,6 @@ let userStyle = {
 
 function ElectionBox({start: start, end: end, title: title, content: content, color: color, users: users, 
                       eventStarter: eventStarter, hash: hash}) {
-    const [startTime, setStartTime] = useState(new Date(start))
-    const [endTime, setEndTime] = useState(new Date(end))
     const [participants, setParts] = useState(users)
     const [starter, setStarter] = useState("")
 
@@ -65,11 +63,11 @@ function ElectionBox({start: start, end: end, title: title, content: content, co
             </div>
             <div style={timeStyle}>
                 <header style={{fontSize: "1.2vw", color: "black"}}> Interval: </header>
-                {(startTime.getHours() < 10)? "0" + startTime.getHours() : startTime.getHours()}:
-                {(startTime.getMinutes() < 10)? "0" + startTime.getMinutes() : startTime.getMinutes()}
+                {(new Date(start).getHours() < 10)? "0" + new Date(start).getHours() : new Date(start).getHours()}:
+                {(new Date(start).getMinutes() < 10)? "0" + new Date(start).getMinutes() : new Date(start).getMinutes()}
                 {"  ~  "}
-                {(endTime.getHours() < 10)? "0" + endTime.getHours() : endTime.getHours()}:
-                {(endTime.getMinutes() < 10)? "0" + endTime.getMinutes() : endTime.getMinutes()}
+                {(new Date(end).getHours() < 10)? "0" + new Date(end).getHours() : new Date(end).getHours()}:
+                {(new Date(end).getMinutes() < 10)? "0" + new Date(end).getMinutes() : new Date(end).getMinutes()}
 
             </div>
             <div style={contentStyle}>

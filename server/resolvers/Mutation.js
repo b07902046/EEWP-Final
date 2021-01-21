@@ -176,6 +176,24 @@ const Mutation = {
         election[0]["finalStart"] = st_time
         election[0]["finalEnd"] = ed_time
         election[0].save()
+        console.log(election[0])
+
+        pubSub.publish(`ElectionDecide ${args.data.hash}`, {
+            Election: {
+                eventStarter: election[0].eventStarter,
+                start: election[0].start,
+                end: election[0].end,
+                color: election[0].color,
+                title: election[0].title,
+                content: election[0].content,
+                finalStart: election[0].finalStart,
+                finalEnd: election[0].finalEnd,
+                users: election[0].users,
+                hash: election[0].hash,
+                expectedInterval: election[0].expectedInterval
+            }
+        })
+        
         return election[0]
     },
     CreateVote(parent, args, { db, pubSub }, info) {

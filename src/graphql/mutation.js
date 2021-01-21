@@ -128,3 +128,17 @@ export const VOTE_MUTATION = gql`
         }
     }
 `
+
+export const DECIDE_ELECTION = gql`
+    mutation DecideElection(
+        $hash: String!
+    ) {
+        DecideElection(data: {
+            hash: $hash
+        }) {
+            eventStarter
+            finalStart
+            finalEnd
+        }
+    }
+`
