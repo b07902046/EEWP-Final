@@ -126,7 +126,6 @@ function App() {
   }
 
   const handleMessageBox = (msg) => {
-    console.log(msg)
     let msgbox = document.getElementById("login-message")
     msgbox.innerHTML = msg
     msgbox.style.display = "inline"
@@ -218,7 +217,6 @@ function App() {
 
   const handleDeleteScheduleBox = (id, index) => {
     deleteSchedule({id:id})
-    setDaySchedule(daySchedule.filter(ds => ds._id === id))
   }
 
   const handleReturn = () => {
@@ -362,12 +360,14 @@ function App() {
             newTimePointer[h].titles[m] = ele.title
           }
         }
-        newDaySchedule.sort((a, b) => { 
-          let t1 = new Date(a.start)
-          let t2 = new Date(b.start)
-          return t1.getTime() - t2.getTime() })
-        setDaySchedule(newDaySchedule)
+        
       })
+      newDaySchedule.sort((a, b) => { 
+        let t1 = new Date(a.start)
+        let t2 = new Date(b.start)
+        return t1.getTime() - t2.getTime() })
+      
+      setDaySchedule(newDaySchedule)
       
       // find day election
       let newDayElection = []
@@ -387,7 +387,7 @@ function App() {
     }
     setTimePointer(newTimePointer)
     setModifySchedule(false)
-  }, [event, data, Schedules, Elections])
+  }, [event, Schedules, Elections])
 
   useEffect(() => {
     if(mouseStatus === false && cursBeg !== undefined && cursEnd !== undefined) {

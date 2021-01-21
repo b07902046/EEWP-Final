@@ -17,8 +17,8 @@ const useChat = () => {
         if(payload === null) setSchedules([]); 
         else if(payload === undefined) setSchedules([]); 
         else{
-          payload.sort((a, b) => { return parseInt(a.start) - parseInt(b.start) })
-          setSchedules(()=>payload)
+          // payload.sort((a, b) => { return (new Date(a.start).getTime()) - (new Date(b.start).getTime()) })
+          setSchedules(payload)
         }
         break
       }

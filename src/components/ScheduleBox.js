@@ -38,8 +38,6 @@ let timeStyle = {
 }
 
 function ScheduleBox({start: start, end: end, title: title, content: content, color: color, handleDelete: handleDelete}) {
-    const [startTime, setStartTime] = useState(new Date(start))
-    const [endTime, setEndTime] = useState(new Date(end))
 
     return (
         <div style={container} className="schedule-container">
@@ -49,11 +47,11 @@ function ScheduleBox({start: start, end: end, title: title, content: content, co
             </div>
             <img src={XPNG} alt="x" onClick={handleDelete}></img>
             <div style={timeStyle}>
-                {(startTime.getHours() < 10)? "0" + startTime.getHours() : startTime.getHours()}:
-                {(startTime.getMinutes() < 10)? "0" + startTime.getMinutes() : startTime.getMinutes()}
+                {(new Date(start).getHours() < 10)? "0" + new Date(start).getHours() : new Date(start).getHours()}:
+                {(new Date(start).getMinutes() < 10)? "0" + new Date(start).getMinutes() : new Date(start).getMinutes()}
                 {"  ~  "}
-                {(endTime.getHours() < 10)? "0" + endTime.getHours() : endTime.getHours()}:
-                {(endTime.getMinutes() < 10)? "0" + endTime.getMinutes() : endTime.getMinutes()}
+                {(new Date(end).getHours() < 10)? "0" + new Date(end).getHours() : new Date(end).getHours()}:
+                {(new Date(end).getMinutes() < 10)? "0" + new Date(end).getMinutes() : new Date(end).getMinutes()}
 
             </div>
             <div style={contentStyle}>
