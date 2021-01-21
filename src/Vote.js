@@ -1,9 +1,6 @@
 import './App.css';
-import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import React, { useEffect, useState } from 'react'
 import TimeLine from './components/TimeLine';
-import { ELECTIONHASH_SCHEDULE_QUERY } from './graphql/query';
-import { VOTE_MUTATION } from './graphql/mutation';
 
 function VoteInfo(hour, colors, titles) {
     this.hour = hour
@@ -11,10 +8,7 @@ function VoteInfo(hour, colors, titles) {
     this.titles = titles
 }
 
-function Vote({hash, userID, handleReturnVote}) {
-    const { loading, error, data } = useQuery(ELECTIONHASH_SCHEDULE_QUERY, {
-      variables: { hash: hash, user: userID}
-    })
+function Vote({hash, userID, handleReturnVote, client}) {
     const [year, setYear] = useState(new Date().getFullYear())
     const [month, setMonth] = useState(new Date().getMonth() + 1)
     const [day, setDay] = useState(new Date().getDate())
@@ -27,8 +21,8 @@ function Vote({hash, userID, handleReturnVote}) {
     const [cursBeg, setCursBeg] = useState(undefined)
     const [cursEnd, setCursEnd] = useState(undefined)
     const [votes, setVotes] = useState([])
+    const [schedules, setSchedules] = useState(undefined) // whole schedules
 
-    const [addVote] = useMutation(VOTE_MUTATION)
 
     document.addEventListener('mousedown', () => {
       setMouseStatus(true)
@@ -37,6 +31,31 @@ function Vote({hash, userID, handleReturnVote}) {
     document.addEventListener('mouseup', () => {
       setMouseStatus(false)
     })
+
+    client.onmessage = (message) => {
+      const [task, payload] = JSON.parse(message.data)
+      switch(task) {
+        case "queryElectionHashRes": {
+          if(payload === "Fail") {
+            alert("Hash not found")
+            window.location = "http://localhost:3000/"
+          }
+          else {
+            setStartTime(new Date(payload.start))
+            setEndTime(new Date(payload.end))
+            client.send(JSON.stringify(["querySchedule", { user: userID }]))
+          }
+          break
+        }
+        case "querySchedule": {
+          setSchedules(payload)
+          break
+        }
+        default: {
+          break
+        }
+      }
+    }
 
     const handleDragOut = (minute, e) => {
       if(mouseStatus) {
@@ -93,14 +112,8 @@ function Vote({hash, userID, handleReturnVote}) {
           document.getElementById(eid).style.backgroundColor = "green"
         }
       }
-      addVote({
-        variables: {
-          user: userID,
-          hash: hash,
-          starts: newStarts,
-          ends: newEnds
-        }
-      })
+      client.send(JSON.stringify(["createVote", { user: userID, hash: hash, starts: newStarts, ends: newEnds }]))
+      
       setVotes([])
       setCursBeg(undefined)
       setCursEnd(undefined)
@@ -131,20 +144,6 @@ function Vote({hash, userID, handleReturnVote}) {
     }
 
     useEffect(() => {
-      if(data) {
-        if(data.ElectionHashQuery.length === 0) {
-          window.location = "http://localhost:3000/"
-        }
-        else {
-          let newData = data.ElectionHashQuery[0]
-          setStartTime(new Date(parseInt(newData.start)))
-          setEndTime(new Date(parseInt(newData.end)))
-          
-        }
-      }
-    }, [data])
-
-    useEffect(() => {
       let cy = startTime.getFullYear()
       let cm = startTime.getMonth() + 1
       let cd = startTime.getDate()
@@ -169,10 +168,11 @@ function Vote({hash, userID, handleReturnVote}) {
         }
         newVoteInfo.push(new VoteInfo(i, colors, titles))
       }
-      if(data) {
-          for(let i = 0; i < data.Schedules.length; i++) {
-            let sdate = new Date(parseInt(data.Schedules[i].start))
-            let edate = new Date(parseInt(data.Schedules[i].end))
+
+      if(schedules !== undefined) {
+          for(let i = 0; i < schedules.length; i++) {
+            let sdate = new Date(schedules[i].start)
+            let edate = new Date(schedules[i].end)
             
             let ny = sdate.getFullYear()
             let nm = sdate.getMonth() + 1
@@ -186,8 +186,8 @@ function Vote({hash, userID, handleReturnVote}) {
                     let h = Math.floor(j / 60)
                     let m = Math.floor((j % 60 ) / 5)
                     if(h >= sh && h <= eh) {
-                      if(newVoteInfo[h - sh].colors[m] === "") newVoteInfo[h - sh].colors[m] = data.Schedules[i].color + "40"
-                      newVoteInfo[h - sh].titles[m] = data.Schedules[i].title
+                      if(newVoteInfo[h - sh].colors[m] === "") newVoteInfo[h - sh].colors[m] = schedules[i].color + "40"
+                      newVoteInfo[h - sh].titles[m] = schedules[i].title
                     } 
                 }             
             }
@@ -195,7 +195,13 @@ function Vote({hash, userID, handleReturnVote}) {
       }
       setVoteInfo(newVoteInfo)
 
-    }, [startTime, endTime])
+    }, [schedules, startTime, endTime])
+
+    useEffect(() => {
+      if(voteInfo.length === 0) {
+        client.send(JSON.stringify(["queryElectionHash", { hash: hash }]))
+      }
+    }, [voteInfo])
 
     return (
     <div className="container">

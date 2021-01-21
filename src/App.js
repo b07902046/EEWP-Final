@@ -1,10 +1,6 @@
 import './App.css';
 import RegisterPage from './RegisterPage'
-import React, { useEffect, useRef, useCallback, useState } from 'react'
-import { useQuery, useMutation} from '@apollo/react-hooks'
-import { SCHEDULE_ELECTION_QUERY ,ELECTION_QUERY} from './graphql/query'
-import { CREATE_ElECTION_MUTATION, CREATE_SCHEDULE_MUTATION, JOIN_ELECTION } from './graphql/mutation'
-import { SCHEDULE_SUBSCRIPTION, ELECTION_SUBSCRIPTION } from './graphql/subscription'
+import React, { useEffect, useState } from 'react'
 import DateBlock from './components/DateBlock'
 import ScheduleBox from './components/ScheduleBox'
 import ElectionBox from './components/ElectionBox'
@@ -59,16 +55,10 @@ function App() {
   const [color, setColor] = useState("#00FFdd")
   const [daySchedule, setDaySchedule] = useState([])
   const [dayElection, setDayElection] = useState([])
-  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule,decideElection}=useSch()
+  const {Schedules,querySchedule,createSchedule,Elections,queryElection,createElection, deleteSchedule,decideElection,joinElection}=useSch()
   // graphql
-  const { loading, error, data, subscribeToMore,refetch} = useQuery(ELECTION_QUERY, {
-    variables: {
-      query: userID
-    }
-  })
   //const [addSchedule] = useMutation(CREATE_SCHEDULE_MUTATION)
   //const [addElection] = useMutation(CREATE_ElECTION_MUTATION)
-  const [joinElection] = useMutation(JOIN_ELECTION)
 
 
   document.addEventListener('mousedown', () => {
@@ -228,7 +218,7 @@ function App() {
   }
 
   const handleSchedulingReturn = () => {
-    refetch()
+    // refetch()
     setStartTime(undefined)
     setEndTime(undefined)
     setEvent("schedule")
@@ -252,11 +242,11 @@ function App() {
 
   const handleAddElection = () => {
     if(startTime === undefined || endTime === undefined) {
-      alert("Please select an interval")
+      handleMessageBox("please select intervals")
       return
     }
     if(title === "") {
-      alert("Must fill in title")
+      handleMessageBox("please fill in the title")
       return 
     }
 
@@ -301,12 +291,7 @@ function App() {
   }
 
   const handleOnAccept = (u, h, e) => {
-    joinElection({
-      variables: {
-        user: u,
-        hash: h
-      }
-    })
+    joinElection({ user_id: u, hash: h})
     setEvent("vote")
   }
 
@@ -349,12 +334,11 @@ function App() {
       newDateInfo.push(new DateBlockInfo(0, null,undefined))
     }
     let newDateArrange = []
-    let num = 0
     for(let i = 0; i < Math.ceil(newDateInfo.length / 7); i++) {
       let tmpDateInfo = newDateInfo.slice(i * 7, i * 7 + 7)
-      newDateArrange.push(tmpDateInfo.map(dateinfo => (dateinfo.day === 0)?
-      (<DateBlock date="" key={num++} data={undefined}></DateBlock>) : 
-      (<DateBlock date={dateinfo.day} key={num++} onClick={handleClickDateBlock.bind(this,dateinfo.day)} data={dateinfo.schedules}></DateBlock>)))
+      newDateArrange.push(tmpDateInfo.map((dateinfo, index) => (dateinfo.day === 0)?
+      (<DateBlock date="" key={index + i * 7} data={undefined}></DateBlock>) : 
+      (<DateBlock date={dateinfo.day} key={index + i * 7} onClick={handleClickDateBlock.bind(this,dateinfo.day)} data={dateinfo.schedules}></DateBlock>)))
     }
     setDateInfo(newDateArrange)
   }, [year, month,Schedules])
@@ -377,7 +361,7 @@ function App() {
           for(let j = tstart.getHours() * 60 + tstart.getMinutes(); j <= tend.getHours() * 60 + tend.getMinutes(); j+=5) {
             let h = Math.floor(j / 60)
             let m = Math.floor((j % 60) / 5)
-            newTimePointer[h].colors[m] = ele.color
+            newTimePointer[h].colors[m] = ele.color + "80"
             newTimePointer[h].titles[m] = ele.title
           }
         }
@@ -394,7 +378,6 @@ function App() {
       let newDayElection = []
       Elections.map((ele)=>{
         let tstart = new Date(ele.start)
-        let tend = new Date(ele.end)
         if(year === tstart.getFullYear() && month === tstart.getMonth() + 1 && day === tstart.getDate()) {
           newDayElection.push(ele)
         }
@@ -419,19 +402,6 @@ function App() {
       setEndTime(tend)
     }
   }, [mouseStatus, cursBeg, cursEnd])
-
-  useEffect(() => {
-    subscribeToMore({
-      document: ELECTION_SUBSCRIPTION,
-      variables: { user: userID },
-      updateQuery: (prev, { subscriptionData }) => {
-        if(!subscriptionData.data) return prev
-        const newData = subscriptionData.data.Election
-        return {...prev, Elections: [...prev.Elections, newData]}
-      }
-    })
-  }, [subscribeToMore, userID])
-  
 
   return (
     (event === "login")? (
@@ -507,20 +477,20 @@ function App() {
         </div>
         <div className="scheduleEventList">
           <div className="scheduleBoxList">
-            {(loading)? ("loading") : (
+            {
               daySchedule.map((s, index) => 
               <ScheduleBox start={s.start} end={s.end} title={s.title} content={s.content} color={s.color} key={index}
                handleDelete={handleDeleteScheduleBox.bind(this, s._id, index)}>
               </ScheduleBox> )
-            )}
+            }
           </div>
           <div className="electionBoxList">
-            {(loading)? ("loading") : (
+            {
               dayElection.map((e, index) => 
               <ElectionBox start={e.start} end={e.end} title={e.title} content={e.content} color={e.color} 
               key={index} users={e.users} eventStarter={e.eventStarter} hash={e.hash}>
               </ElectionBox> )
-            )}
+            }
           </div>
         </div>
         <div className="scheduleFooter">
@@ -577,9 +547,9 @@ function App() {
         </div>
       </div>
     ) : (event === "voteJoin")? (
-      <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept}></VoteJoin>
+      <VoteJoin hash={hash} userID={userID} handleOnAccept={handleOnAccept} client={client}></VoteJoin>
       ) : (event === "vote")? (
-      <Vote hash={hash} userID={userID} handleReturnVote={handleReturnVote}></Vote>
+      <Vote hash={hash} userID={userID} client={client} handleReturnVote={handleReturnVote}></Vote>
     ) : (
       <div> wait... </div>
     )

@@ -1,10 +1,4 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga'
-import Query from './resolvers/Query'
-import Mutation from './resolvers/Mutation'
-import Subscription from './resolvers/Subscription'
 import bcrypt from 'bcrypt'
-import { IntrospectionFragmentMatcher } from 'apollo-boost'
-import { start } from 'repl'
 
 // express and websocket
 const http = require('http')
@@ -271,8 +265,21 @@ db.once('open', () => {
         } 
         case "createVote":{
           Vote.insertMany(payload)
+          break
         }
-        default: break
+        case "queryElectionHash": {
+          let election = await Election.findOne(payload)
+          if(!election) {
+            ws.send(JSON, stringify(["queryElectionHashRes", "Fail"]))
+          }
+          else {
+            ws.send(JSON.stringify(["queryElectionHashRes", election]))
+          }
+          break
+        }
+        default: {
+          break
+        }
       }
     }
   })
@@ -282,24 +289,4 @@ const PORT = process.env.port || 5000
 
 server.listen(PORT, () => {
   console.log(`Express listen on http://localhost:${PORT}`)
-})
-
-const pubSub = new PubSub()
-
-const graphqlServer = new GraphQLServer({
-  typeDefs: './server/src/schema.graphql',
-  resolvers: {
-    Query,
-    Mutation,
-    Subscription
-  },
-  context: {
-    db,
-    pubSub
-  }
-});
-
-
-graphqlServer.start({ port: process.env.PORT | 4000 }, () => {
-  console.log(`The server is up on port ${process.env.PORT | 4000}!`)
 })

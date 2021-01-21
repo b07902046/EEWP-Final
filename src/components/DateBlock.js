@@ -1,9 +1,9 @@
 import { Greengrass } from 'aws-sdk'
 import React from 'react'
 import '../App.css'
-//backgroundColor: "#ccc",
+//
 const style = {
-  
+  backgroundColor: "#ccc",
   border: "1px solid #bbb",
   padding: "1px 5px",
   borderRadius: "5px",
