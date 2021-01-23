@@ -17,7 +17,7 @@ function VoteJoin({hash, userID, handleOnAccept, client}) {
       case "queryElectionHashRes": {
         if(payload === "Fail") {
           alert("Hash not found")
-          window.location = "http://localhost:59321/"
+          window.location = "http://localhost:3000/"
         }
         else {
           setStartTime(new Date(payload.start))
@@ -35,6 +35,7 @@ function VoteJoin({hash, userID, handleOnAccept, client}) {
         console.log(payload)
         setFinalStart(payload.finalStart)
         setFinalEnd(payload.finalEnd)
+        break
       }
       default: {
         break
@@ -44,7 +45,7 @@ function VoteJoin({hash, userID, handleOnAccept, client}) {
   }
 
   const handleReject = () => {
-    window.location = "http://localhost:59321/"
+    window.location = "http://localhost:3000/"
   }
 
   const handleDecide = () => {

@@ -270,7 +270,7 @@ db.once('open', () => {
         case "queryElectionHash": {
           let election = await Election.findOne(payload)
           if(!election) {
-            ws.send(JSON, stringify(["queryElectionHashRes", "Fail"]))
+            ws.send(JSON.stringify(["queryElectionHashRes", "Fail"]))
           }
           else {
             ws.send(JSON.stringify(["queryElectionHashRes", election]))
@@ -285,7 +285,7 @@ db.once('open', () => {
   })
 })
 
-const PORT = process.env.port || 46232
+const PORT = process.env.port || 5000
 
 server.listen(PORT, () => {
   console.log(`Express listen on http://localhost:${PORT}`)
